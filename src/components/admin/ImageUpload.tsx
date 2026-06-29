@@ -15,12 +15,16 @@ export default function ImageUpload({
   rounded = false,
   label = "Image",
   onError,
+  accept = "image/jpeg,image/png,image/webp,image/svg+xml",
+  hint = "JPG, PNG, WEBP (≤3 MB) or SVG (≤1 MB)",
 }: {
   value: string;
   onChange: (url: string) => void;
   rounded?: boolean;
   label?: string;
   onError?: (msg: string) => void;
+  accept?: string;
+  hint?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -89,7 +93,7 @@ export default function ImageUpload({
           <input
             ref={inputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp,image/svg+xml"
+            accept={accept}
             className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -108,9 +112,7 @@ export default function ImageUpload({
             className="w-full bg-transparent py-2 text-sm outline-none"
           />
         </div>
-        <p className="text-xs text-slate-400">
-          JPG, PNG, WEBP (≤3 MB) or SVG (≤1 MB)
-        </p>
+        <p className="text-xs text-slate-400">{hint}</p>
       </div>
     </div>
   );

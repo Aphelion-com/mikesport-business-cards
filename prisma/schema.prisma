@@ -66,8 +66,9 @@ model CardEvent {
 model AppSettings {
   id                  String   @id @default("singleton")
   logoUrl             String?
+  faviconUrl          String?
   dashboardTitle      String   @default("Mike Sport Cards")
-  accentColor         String   @default("#F58220")
+  accentColor         String   @default("#F1582B")
   companyWebsite      String?
   defaultAddress      String?
   defaultCompanyPhone String?

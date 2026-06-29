@@ -6,8 +6,9 @@ export const SETTINGS_ID = "singleton";
 export const DEFAULT_SETTINGS = {
   id: SETTINGS_ID,
   logoUrl: null as string | null,
+  faviconUrl: null as string | null,
   dashboardTitle: "Mike Sport Cards",
-  accentColor: "#F58220",
+  accentColor: "#F1582B",
   companyWebsite: null as string | null,
   defaultAddress: null as string | null,
   defaultCompanyPhone: null as string | null,
@@ -16,12 +17,20 @@ export const DEFAULT_SETTINGS = {
   emblemPosition: "top",
 };
 
-/** Read settings without writing (safe for public pages). Falls back to defaults. */
+/**
+ * Read settings without writing (safe for public pages + metadata).
+ * Never throws — falls back to defaults if the row is missing or the DB is
+ * unreachable (e.g. during build-time static generation).
+ */
 export async function getSettingsSafe() {
-  const existing = await prisma.appSettings.findUnique({
-    where: { id: SETTINGS_ID },
-  });
-  return existing ?? DEFAULT_SETTINGS;
+  try {
+    const existing = await prisma.appSettings.findUnique({
+      where: { id: SETTINGS_ID },
+    });
+    return existing ?? DEFAULT_SETTINGS;
+  } catch {
+    return DEFAULT_SETTINGS;
+  }
 }
 
 /** Read settings, creating the singleton row with defaults if missing. */

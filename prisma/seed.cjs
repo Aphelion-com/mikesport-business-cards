@@ -15,7 +15,7 @@ const cards = [
     companyName: "Mike Sport",
     officeLocation: "Head Office - Zalka Highway",
     description:
-      "Retail Director at Mike Sport, leading retail operations and customer experience across the store network.",
+      "Retail Director at Mike Sport, leading retail operations, store performance, and customer experience across the retail network.",
     mobilePhone: "+96179409364",
     companyPhone: "+9611888855",
     extension: null,
@@ -32,7 +32,7 @@ const cards = [
     companyName: "Mike Sport",
     officeLocation: "Head Office - Zalka Highway",
     description:
-      "Buying & Selection Manager at Mike Sport, supporting product selection, buying strategy, and retail assortment planning.",
+      "Buying & Selection Manager at Mike Sport, supporting buying strategy, product selection, and assortment planning across key retail categories.",
     mobilePhone: "+9613072431",
     companyPhone: "+9611888855",
     extension: "1560",
@@ -51,7 +51,7 @@ async function main() {
     create: {
       id: "singleton",
       dashboardTitle: "Mike Sport Cards",
-      accentColor: "#F58220",
+      accentColor: "#F1582B",
       companyWebsite: "https://www.mikesport.com",
       defaultAddress: "Head Office - Zalka Highway",
       defaultCompanyPhone: "+9611888855",

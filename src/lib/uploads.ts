@@ -15,6 +15,8 @@ export const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/webp": "webp",
   "image/svg+xml": "svg",
+  "image/x-icon": "ico",
+  "image/vnd.microsoft.icon": "ico",
 };
 
 export const CONTENT_TYPES: Record<string, string> = {
@@ -23,6 +25,7 @@ export const CONTENT_TYPES: Record<string, string> = {
   png: "image/png",
   webp: "image/webp",
   svg: "image/svg+xml",
+  ico: "image/x-icon",
 };
 
 /** Per-type maximum size in bytes. */

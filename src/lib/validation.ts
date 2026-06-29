@@ -111,6 +111,7 @@ const hexColor = z
 
 export const settingsSchema = z.object({
   logoUrl: optionalImageRef,
+  faviconUrl: optionalImageRef,
   dashboardTitle: z
     .string()
     .trim()
@@ -118,7 +119,7 @@ export const settingsSchema = z.object({
     .transform((v) => (v === undefined || v === "" ? "Mike Sport Cards" : v)),
   accentColor: z
     .union([hexColor, z.literal(""), z.null(), z.undefined()])
-    .transform((v) => (v === "" || v === undefined || v === null ? "#F58220" : v)),
+    .transform((v) => (v === "" || v === undefined || v === null ? "#F1582B" : v)),
   companyWebsite: optionalUrl,
   defaultAddress: optionalString,
   defaultCompanyPhone: optionalString,

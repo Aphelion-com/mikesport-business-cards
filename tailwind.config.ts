@@ -8,26 +8,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Mike Sport accent — warm orange (#F58220).
+        // Mike Sport accent — orange-red (#F1582B).
         brand: {
-          50: "#fef4ec",
-          100: "#fde4d0",
-          200: "#fac79e",
-          300: "#f8a96c",
-          400: "#f69544",
-          500: "#f58220",
-          600: "#dd6c12",
-          700: "#b8550f",
-          800: "#8f4210",
-          900: "#73360f",
-          950: "#3f1c07",
+          50: "#fef3ef",
+          100: "#fce1d8",
+          200: "#f9c2b0",
+          300: "#f59a7d",
+          400: "#f37650",
+          500: "#f1582b",
+          600: "#dd4019",
+          700: "#b73116",
+          800: "#922a18",
+          900: "#772717",
+          950: "#400f08",
         },
         // Warm neutrals for the premium corporate look.
-        paper: "#f7f7f5",
-        sand: "#ecebe6",
-        graphite: "#252525",
-        charcoal: "#151515",
+        paper: "#fafaf8",
+        sand: "#f4f1ec",
+        graphite: "#242424",
+        charcoal: "#111111",
         gold: "#c99a4a",
+        warmborder: "#e7e2da",
+        muted: "#6f6a63",
         // Mike Sport ink — near-black for sidebars / dark surfaces.
         ink: {
           50: "#f6f6f7",

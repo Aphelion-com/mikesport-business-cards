@@ -14,8 +14,9 @@ export default function SettingsForm({ settings }: { settings: AppSettings }) {
   const router = useRouter();
   const [form, setForm] = useState({
     logoUrl: settings.logoUrl ?? "",
+    faviconUrl: settings.faviconUrl ?? "",
     dashboardTitle: settings.dashboardTitle ?? "Mike Sport Cards",
-    accentColor: settings.accentColor ?? "#F58220",
+    accentColor: settings.accentColor ?? "#F1582B",
     companyWebsite: settings.companyWebsite ?? "",
     defaultAddress: settings.defaultAddress ?? "",
     defaultCompanyPhone: settings.defaultCompanyPhone ?? "",
@@ -68,12 +69,27 @@ export default function SettingsForm({ settings }: { settings: AppSettings }) {
             Dashboard logo
           </span>
           <p className="mb-2 text-xs text-slate-400">
-            Shown in the sidebar & header. If empty, the text logo is used.
+            Shown in the sidebar, header & login. If empty, the text logo is used.
           </p>
           <ImageUpload
             value={form.logoUrl}
             onChange={(url) => update("logoUrl", url)}
             label="Logo"
+            onError={(msg) => setToast({ message: msg, variant: "error" })}
+          />
+        </div>
+
+        <div className="mt-5">
+          <span className="text-sm font-medium text-slate-700">Favicon</span>
+          <p className="mb-2 text-xs text-slate-400">
+            Browser-tab icon used across the whole app. ICO, PNG, JPG, WEBP or SVG.
+          </p>
+          <ImageUpload
+            value={form.faviconUrl}
+            onChange={(url) => update("faviconUrl", url)}
+            label="Favicon"
+            accept="image/x-icon,image/vnd.microsoft.icon,image/png,image/jpeg,image/webp,image/svg+xml,.ico"
+            hint="ICO, PNG, JPG, WEBP (≤3 MB) or SVG (≤1 MB)"
             onError={(msg) => setToast({ message: msg, variant: "error" })}
           />
         </div>

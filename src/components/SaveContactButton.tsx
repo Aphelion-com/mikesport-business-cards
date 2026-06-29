@@ -26,16 +26,16 @@ export default function SaveContactButton({ slug }: { slug: string }) {
   return (
     <button
       onClick={handleSave}
-      className="flex w-full items-center justify-center gap-2 rounded-2xl bg-ink-950 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-ink-950/20 ring-1 ring-inset ring-white/10 transition active:scale-[0.98] hover:bg-ink-900"
+      className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-brand-500/30 transition active:scale-[0.98] hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-xl"
     >
       {saved ? (
         <>
-          <Check className="h-5 w-5 text-brand-500" />
+          <Check className="h-5 w-5" />
           Contact Downloaded
         </>
       ) : (
         <>
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-500 text-ink-950">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20">
             <Download className="h-4 w-4" />
           </span>
           Save Contact
