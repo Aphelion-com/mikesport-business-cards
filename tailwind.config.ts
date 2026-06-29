@@ -23,13 +23,13 @@ const config: Config = {
           950: "#400f08",
         },
         // Warm neutrals for the premium corporate look.
-        paper: "#fafaf8",
-        sand: "#f4f1ec",
-        graphite: "#242424",
-        charcoal: "#111111",
+        paper: "#faf8f4",
+        sand: "#f4f0ea",
+        graphite: "#252525",
+        charcoal: "#161616",
         gold: "#c99a4a",
-        warmborder: "#e7e2da",
-        muted: "#6f6a63",
+        warmborder: "#e4dcd2",
+        muted: "#706b64",
         // Mike Sport ink — near-black for sidebars / dark surfaces.
         ink: {
           50: "#f6f6f7",
@@ -93,6 +93,14 @@ const config: Config = {
           from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "pulse-glow": {
+          "0%,100%": { opacity: "0.45", transform: "scale(1)" },
+          "50%": { opacity: "0.8", transform: "scale(1.06)" },
+        },
+        float: {
+          "0%,100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.4s ease-out both",
@@ -103,6 +111,9 @@ const config: Config = {
         "blob-1": "blob-1 18s ease-in-out infinite",
         "blob-2": "blob-2 22s ease-in-out infinite",
         "count-up": "count-up 0.5s ease-out both",
+        "pulse-glow": "pulse-glow 4s ease-in-out infinite",
+        "spin-slow": "spin 16s linear infinite",
+        float: "float 5s ease-in-out infinite",
       },
     },
   },

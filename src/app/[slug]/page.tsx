@@ -18,6 +18,9 @@ import { getSettingsSafe } from "@/lib/settings";
 import SaveContactButton from "@/components/SaveContactButton";
 import TrackPageView from "@/components/TrackPageView";
 import Wordmark from "@/components/Wordmark";
+import CardBackground from "@/components/public/CardBackground";
+import Reveal from "@/components/public/Reveal";
+import AphComFooter from "@/components/public/AphComFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +74,7 @@ function Emblem({ src, className }: { src?: string | null; className?: string })
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-3 flex items-center gap-3">
+    <div className="mb-4 flex items-center gap-3">
       <span className="h-px flex-1 bg-warmborder" />
       <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-muted">
         {children}
@@ -81,22 +84,20 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ContactRow({
+function ContactCard({
   icon,
   label,
   value,
   href,
-  delay,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   href?: string;
-  delay: number;
 }) {
   const inner = (
-    <div className="flex items-center gap-4 rounded-2xl border border-warmborder bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-warmborder bg-sand text-brand-600">
+    <div className="group flex h-full items-center gap-4 rounded-2xl border border-warmborder bg-white px-4 py-3.5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-brand-300 hover:shadow-lg">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-warmborder bg-sand text-brand-600 transition group-hover:scale-105 group-hover:bg-brand-50">
         {icon}
       </div>
       <div className="min-w-0">
@@ -107,16 +108,12 @@ function ContactRow({
       </div>
     </div>
   );
-  return (
-    <div className="animate-fade-in-up" style={{ animationDelay: `${delay}ms` }}>
-      {href ? (
-        <a href={href} className="block">
-          {inner}
-        </a>
-      ) : (
-        inner
-      )}
-    </div>
+  return href ? (
+    <a href={href} className="block h-full">
+      {inner}
+    </a>
+  ) : (
+    inner
   );
 }
 
@@ -139,7 +136,7 @@ function PillButton({
       target={target ? "_blank" : undefined}
       rel="noopener noreferrer"
       aria-disabled={disabled}
-      className={`flex items-center justify-center gap-1.5 rounded-full border px-3 py-3 text-sm font-semibold transition ${
+      className={`flex items-center justify-center gap-1.5 rounded-full border px-3 py-3 text-sm font-semibold transition duration-300 active:scale-95 ${
         disabled
           ? "pointer-events-none border-warmborder bg-sand/60 text-slate-300"
           : "border-warmborder bg-white text-graphite hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-50 hover:shadow-md"
@@ -154,22 +151,10 @@ function PillButton({
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <main className="relative min-h-screen overflow-hidden bg-paper">
-      <div
-        className="pointer-events-none absolute -left-28 top-[-80px] h-72 w-72 animate-blob-1 rounded-full opacity-25 blur-3xl"
-        style={{ background: "radial-gradient(circle, #f1582b 0%, transparent 70%)" }}
-      />
-      <div
-        className="pointer-events-none absolute -right-28 top-1/3 h-80 w-80 animate-blob-2 rounded-full opacity-15 blur-3xl"
-        style={{ background: "radial-gradient(circle, #c99a4a 0%, transparent 70%)" }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(135deg, #111 0 1px, transparent 1px 26px)",
-        }}
-      />
-      <div className="relative mx-auto max-w-md px-4 py-8">{children}</div>
+      <CardBackground />
+      <div className="relative mx-auto max-w-md px-4 py-9 sm:py-12 lg:max-w-xl">
+        {children}
+      </div>
     </main>
   );
 }
@@ -189,8 +174,8 @@ export default async function PublicCardPage({ params }: Props) {
   if (!card.isActive) {
     return (
       <Shell>
-        <div className="flex min-h-[80vh] flex-col items-center justify-center">
-          <div className="w-full animate-scale-in rounded-4xl border border-warmborder bg-white p-8 text-center shadow-card">
+        <div className="flex min-h-[78vh] flex-col items-center justify-center">
+          <div className="w-full animate-scale-in rounded-4xl border border-warmborder bg-white/90 p-8 text-center shadow-card backdrop-blur">
             <div className="flex justify-center">
               <Emblem src={emblemSrc} className="h-9 w-auto max-w-[170px] object-contain" />
             </div>
@@ -205,6 +190,7 @@ export default async function PublicCardPage({ params }: Props) {
               back later or contact the team directly.
             </p>
           </div>
+          <AphComFooter company={card.companyName} />
         </div>
       </Shell>
     );
@@ -217,71 +203,120 @@ export default async function PublicCardPage({ params }: Props) {
     { url: card.tiktokUrl, icon: <TikTokIcon className="h-5 w-5" />, label: "TikTok" },
   ].filter((s) => s.url);
 
-  let d = 0;
-  const next = () => (d += 70);
   const location = card.address || card.officeLocation;
 
-  // Professional details rows (only those present)
+  const contactItems = [
+    {
+      key: "mobile",
+      icon: <Smartphone className="h-5 w-5" />,
+      label: "Mobile",
+      value: card.mobilePhone,
+      href: `tel:${card.mobilePhone}`,
+    },
+    card.companyPhone && {
+      key: "company",
+      icon: <Phone className="h-5 w-5" />,
+      label: "Company",
+      value: card.extension
+        ? `${card.companyPhone} · ext ${card.extension}`
+        : card.companyPhone,
+      href: `tel:${card.companyPhone}${card.extension ? `,${card.extension}` : ""}`,
+    },
+    {
+      key: "email",
+      icon: <Mail className="h-5 w-5" />,
+      label: "Email",
+      value: card.email,
+      href: `mailto:${card.email}`,
+    },
+    card.website && {
+      key: "website",
+      icon: <Globe className="h-5 w-5" />,
+      label: "Website",
+      value: card.website.replace(/^https?:\/\//, ""),
+      href: card.website,
+    },
+    location && {
+      key: "location",
+      icon: <MapPin className="h-5 w-5" />,
+      label: "Location",
+      value: location,
+      href: `https://maps.google.com/?q=${encodeURIComponent(location)}`,
+    },
+  ].filter(Boolean) as {
+    key: string;
+    icon: React.ReactNode;
+    label: string;
+    value: string;
+    href: string;
+  }[];
+
   const proDetails = [
     { icon: <Briefcase className="h-4 w-4" />, label: "Position", value: card.position },
     { icon: <Building2 className="h-4 w-4" />, label: "Department", value: card.department },
     { icon: <Building2 className="h-4 w-4" />, label: "Company", value: card.companyName },
     { icon: <MapPin className="h-4 w-4" />, label: "Office", value: card.officeLocation },
-  ].filter((r) => r.value);
+  ].filter((r) => r.value) as {
+    icon: React.ReactNode;
+    label: string;
+    value: string;
+  }[];
 
   return (
     <Shell>
       <TrackPageView slug={card.slug} />
 
-      {/* A. Brand intro */}
-      {emblemPosition === "top" && (
-        <div className="mb-6 flex animate-fade-in flex-col items-center gap-2">
-          <Emblem src={emblemSrc} className="h-10 w-auto max-w-[180px] object-contain" />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted">
-            Digital Business Card
-          </span>
+      {/* B. Brand mark — small, elegant, animated (no plain title text) */}
+      {emblemPosition !== "footer" && (
+        <div className="mb-7 flex animate-fade-in flex-col items-center gap-2.5">
+          <div className="group transition duration-500 hover:-translate-y-0.5">
+            <Emblem
+              src={emblemSrc}
+              className="h-10 w-auto max-w-[180px] object-contain transition duration-500 group-hover:scale-105"
+            />
+          </div>
+          <span className="block h-[3px] w-10 rounded-full bg-gradient-to-r from-brand-500 to-gold" />
         </div>
       )}
 
-      {/* Card */}
-      <div className="overflow-hidden rounded-4xl border border-warmborder bg-white/90 shadow-card backdrop-blur">
+      {/* C. Main profile card */}
+      <div className="overflow-hidden rounded-[28px] border border-warmborder bg-white/85 shadow-card backdrop-blur-md">
         <div className="h-1.5 bg-gradient-to-r from-brand-500 via-brand-400 to-gold" />
-        {emblemPosition === "header" && (
-          <div className="flex animate-fade-in justify-center pt-5">
-            <Emblem src={emblemSrc} className="h-8 w-auto max-w-[160px] object-contain" />
-          </div>
-        )}
 
-        <div className="px-6 pb-7 pt-7">
-          {/* B. Hero */}
-          <div className="flex animate-scale-in justify-center">
-            <div className="rounded-full bg-gradient-to-br from-brand-500 to-gold p-[3px] shadow-lg">
-              {card.profileImageUrl ? (
-                <Img
-                  src={card.profileImageUrl}
-                  alt={card.profileImageAlt || card.fullName}
-                  className="h-28 w-28 rounded-full border-4 border-white object-cover"
-                />
-              ) : (
-                <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-white bg-graphite text-3xl font-extrabold text-brand-500">
-                  {initials(card.fullName)}
-                </div>
-              )}
+        <div className="px-6 pb-8 pt-8 sm:px-8">
+          {/* Hero */}
+          <div className="flex justify-center">
+            <div className="relative animate-scale-in">
+              {/* glow */}
+              <span className="absolute inset-0 -z-10 animate-pulse-glow rounded-full bg-brand-500/30 blur-2xl" />
+              <div className="rounded-full bg-gradient-to-br from-brand-500 to-gold p-[3px] shadow-[0_12px_30px_-10px_rgba(241,88,43,0.6)]">
+                {card.profileImageUrl ? (
+                  <Img
+                    src={card.profileImageUrl}
+                    alt={card.profileImageAlt || card.fullName}
+                    className="h-32 w-32 rounded-full border-4 border-white object-cover"
+                  />
+                ) : (
+                  <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-graphite text-4xl font-extrabold text-brand-500">
+                    {initials(card.fullName)}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="mt-4 text-center">
+          <div className="mt-5 text-center">
             <h1
-              className="animate-fade-in-up text-2xl font-bold tracking-tight text-graphite"
+              className="animate-fade-in-up text-[26px] font-bold leading-tight tracking-tight text-graphite"
               style={{ animationDelay: "80ms" }}
             >
               {card.fullName}
             </h1>
             <div
-              className="mt-2 flex animate-fade-in-up flex-wrap items-center justify-center gap-2"
+              className="mt-2.5 flex animate-fade-in-up flex-wrap items-center justify-center gap-2"
               style={{ animationDelay: "140ms" }}
             >
-              <span className="rounded-full bg-brand-50 px-3 py-1 text-sm font-semibold text-brand-700">
+              <span className="rounded-full bg-brand-500 px-3.5 py-1 text-sm font-semibold text-white shadow-sm">
                 {card.position}
               </span>
               {card.department && (
@@ -292,7 +327,7 @@ export default async function PublicCardPage({ params }: Props) {
             </div>
             {card.companyName && (
               <p
-                className="mt-2 animate-fade-in-up text-sm font-medium text-muted"
+                className="mt-2 animate-fade-in-up text-sm font-semibold text-graphite"
                 style={{ animationDelay: "180ms" }}
               >
                 {card.companyName}
@@ -300,7 +335,7 @@ export default async function PublicCardPage({ params }: Props) {
             )}
             {card.description && (
               <p
-                className="mt-4 animate-fade-in-up text-center text-sm leading-relaxed text-slate-600"
+                className="mx-auto mt-4 max-w-sm animate-fade-in-up text-center text-[14px] leading-relaxed text-slate-600"
                 style={{ animationDelay: "220ms" }}
               >
                 {card.description}
@@ -308,167 +343,99 @@ export default async function PublicCardPage({ params }: Props) {
             )}
           </div>
 
-          {/* C. Quick actions */}
-          <div
-            className="mt-7 animate-fade-in-up"
-            style={{ animationDelay: "260ms" }}
-          >
+          {/* D. Action area */}
+          <div className="mt-7 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
             <h2 className="mb-3 text-center text-sm font-bold text-graphite">
               Connect with {firstName}
             </h2>
             <SaveContactButton slug={card.slug} />
             <div className="mt-2.5 grid grid-cols-3 gap-2.5">
-              <PillButton
-                href={`tel:${card.mobilePhone}`}
-                icon={<Phone className="h-4 w-4 text-brand-600" />}
-                label="Call"
-              />
-              <PillButton
-                href={`mailto:${card.email}`}
-                icon={<Mail className="h-4 w-4 text-brand-600" />}
-                label="Email"
-              />
-              <PillButton
-                href={card.website || "#"}
-                icon={<Globe className="h-4 w-4 text-brand-600" />}
-                label="Web"
-                target={!!card.website}
-                disabled={!card.website}
-              />
+              <PillButton href={`tel:${card.mobilePhone}`} icon={<Phone className="h-4 w-4 text-brand-600" />} label="Call" />
+              <PillButton href={`mailto:${card.email}`} icon={<Mail className="h-4 w-4 text-brand-600" />} label="Email" />
+              <PillButton href={card.website || "#"} icon={<Globe className="h-4 w-4 text-brand-600" />} label="Web" target={!!card.website} disabled={!card.website} />
             </div>
           </div>
-
-          {/* D. Contact information */}
-          <div className="mt-8">
-            <SectionHeading>Contact Information</SectionHeading>
-            <div className="space-y-2.5">
-              <ContactRow
-                icon={<Smartphone className="h-5 w-5" />}
-                label="Mobile"
-                value={card.mobilePhone}
-                href={`tel:${card.mobilePhone}`}
-                delay={(next(), 300 + d)}
-              />
-              {card.companyPhone && (
-                <ContactRow
-                  icon={<Phone className="h-5 w-5" />}
-                  label="Company"
-                  value={
-                    card.extension
-                      ? `${card.companyPhone} · ext ${card.extension}`
-                      : card.companyPhone
-                  }
-                  href={`tel:${card.companyPhone}${
-                    card.extension ? `,${card.extension}` : ""
-                  }`}
-                  delay={(next(), 300 + d)}
-                />
-              )}
-              <ContactRow
-                icon={<Mail className="h-5 w-5" />}
-                label="Email"
-                value={card.email}
-                href={`mailto:${card.email}`}
-                delay={(next(), 300 + d)}
-              />
-              {card.website && (
-                <ContactRow
-                  icon={<Globe className="h-5 w-5" />}
-                  label="Website"
-                  value={card.website.replace(/^https?:\/\//, "")}
-                  href={card.website}
-                  delay={(next(), 300 + d)}
-                />
-              )}
-              {location && (
-                <ContactRow
-                  icon={<MapPin className="h-5 w-5" />}
-                  label="Location"
-                  value={location}
-                  href={`https://maps.google.com/?q=${encodeURIComponent(location)}`}
-                  delay={(next(), 300 + d)}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* E. Professional details */}
-          {proDetails.length > 0 && (
-            <div
-              className="mt-8 animate-fade-in-up"
-              style={{ animationDelay: `${300 + d + 60}ms` }}
-            >
-              <SectionHeading>Professional Details</SectionHeading>
-              <div className="rounded-2xl border border-warmborder bg-sand/50 p-4">
-                <dl className="space-y-3">
-                  {proDetails.map((r) => (
-                    <div key={r.label} className="flex items-center gap-3">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-warmborder bg-white text-brand-600">
-                        {r.icon}
-                      </span>
-                      <div className="min-w-0">
-                        <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-                          {r.label}
-                        </dt>
-                        <dd className="truncate text-sm font-medium text-graphite">
-                          {r.value}
-                        </dd>
-                      </div>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </div>
-          )}
-
-          {/* F. Social */}
-          {socials.length > 0 && (
-            <div
-              className="mt-8 animate-fade-in-up"
-              style={{ animationDelay: `${300 + d + 120}ms` }}
-            >
-              <SectionHeading>Follow Mike Sport</SectionHeading>
-              <div className="flex justify-center gap-3">
-                {socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.url as string}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={s.label}
-                    className="flex h-12 w-12 items-center justify-center rounded-full border border-warmborder bg-white text-graphite transition hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-500 hover:text-white hover:shadow-md"
-                  >
-                    {s.icon}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* G. Footer */}
-      <div className="mt-6 flex flex-col items-center gap-1.5">
-        {emblemPosition === "footer" ? (
-          <Emblem src={emblemSrc} className="h-8 w-auto max-w-[150px] object-contain" />
-        ) : (
-          <Wordmark className="opacity-80" />
-        )}
-        {(card.website || settings.companyWebsite) && (
-          <a
-            href={(card.website || settings.companyWebsite) as string}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs font-medium text-brand-700 hover:text-brand-800"
-          >
-            {(card.website || settings.companyWebsite)!.replace(/^https?:\/\//, "")}
-          </a>
-        )}
-        <p className="text-center text-xs text-muted">
-          © {new Date().getFullYear()} {card.companyName || "Mike Sport"}. All
-          rights reserved.
-        </p>
+      {/* E. Contact information */}
+      <div className="mt-8">
+        <Reveal>
+          <SectionHeading>Contact Information</SectionHeading>
+        </Reveal>
+        <div className="grid gap-2.5 sm:grid-cols-2">
+          {contactItems.map((c, i) => (
+            <Reveal key={c.key} delay={i * 70}>
+              <ContactCard icon={c.icon} label={c.label} value={c.value} href={c.href} />
+            </Reveal>
+          ))}
+        </div>
       </div>
+
+      {/* F. Professional details */}
+      {proDetails.length > 0 && (
+        <div className="mt-8">
+          <Reveal>
+            <SectionHeading>Professional Details</SectionHeading>
+          </Reveal>
+          <Reveal delay={80}>
+            <div className="rounded-[22px] border border-warmborder bg-gradient-to-br from-white to-sand/60 p-5 shadow-sm">
+              <dl className="grid gap-4 sm:grid-cols-2">
+                {proDetails.map((r) => (
+                  <div key={r.label} className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-warmborder bg-white text-brand-600">
+                      {r.icon}
+                    </span>
+                    <div className="min-w-0">
+                      <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+                        {r.label}
+                      </dt>
+                      <dd className="truncate text-sm font-semibold text-graphite">
+                        {r.value}
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </Reveal>
+        </div>
+      )}
+
+      {/* G. Social links */}
+      {socials.length > 0 && (
+        <div className="mt-8">
+          <Reveal>
+            <SectionHeading>Follow Mike Sport</SectionHeading>
+          </Reveal>
+          <Reveal delay={80}>
+            <div className="flex justify-center gap-3">
+              {socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.url as string}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  className="flex h-12 w-12 items-center justify-center rounded-full border border-warmborder bg-white text-graphite transition duration-300 hover:-translate-y-1 hover:rotate-3 hover:border-brand-300 hover:bg-brand-500 hover:text-white hover:shadow-lg"
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      )}
+
+      {/* Footer emblem (if footer position) */}
+      {emblemPosition === "footer" && (
+        <div className="mt-8 flex justify-center">
+          <Emblem src={emblemSrc} className="h-8 w-auto max-w-[150px] object-contain" />
+        </div>
+      )}
+
+      {/* H. Powered footer */}
+      <AphComFooter company={card.companyName} />
     </Shell>
   );
 }

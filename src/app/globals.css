@@ -54,6 +54,49 @@ input[type="number"]::-webkit-inner-spin-button {
   }
 }
 
+/* AphCom powered-by footer */
+.footer-content-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.footer-copyright {
+  font-size: 0.75rem;
+  color: theme("colors.muted");
+}
+.aphcom-link {
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: theme("colors.muted");
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.3s ease;
+}
+.aphcom-word {
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  background-image: linear-gradient(90deg, #2af598, #22c9ff, #2af598);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: aphcom-pan 4s linear infinite;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+.aphcom-link:hover .aphcom-word {
+  filter: drop-shadow(0 0 8px rgba(34, 201, 255, 0.55));
+  transform: translateY(-1px);
+}
+@keyframes aphcom-pan {
+  to {
+    background-position: 200% center;
+  }
+}
+
 /* Respect reduced-motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,

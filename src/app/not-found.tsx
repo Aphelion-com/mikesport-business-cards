@@ -2,6 +2,8 @@ import Link from "next/link";
 import { SearchX } from "lucide-react";
 import Wordmark from "@/components/Wordmark";
 import { getSettingsSafe } from "@/lib/settings";
+import CardBackground from "@/components/public/CardBackground";
+import AphComFooter from "@/components/public/AphComFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -16,11 +18,8 @@ export default async function NotFound() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-paper px-6 text-center">
-      <div
-        className="pointer-events-none absolute -left-28 top-[-80px] h-72 w-72 animate-blob-1 rounded-full opacity-25 blur-3xl"
-        style={{ background: "radial-gradient(circle, #f1582b 0%, transparent 70%)" }}
-      />
-      <div className="relative w-full max-w-sm rounded-4xl border border-warmborder bg-white p-8 shadow-card">
+      <CardBackground />
+      <div className="relative w-full max-w-sm animate-scale-in rounded-4xl border border-warmborder bg-white/90 p-8 shadow-card backdrop-blur">
         <div className="flex justify-center">
           {emblemSrc ? (
             <Img src={emblemSrc} alt="Mike Sport" className="h-9 w-auto max-w-[170px] object-contain" />
@@ -43,18 +42,21 @@ export default async function NotFound() {
             href={settings.companyWebsite}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-600"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-lg"
           >
             Visit Mike Sport
           </a>
         ) : (
           <Link
             href="/"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-600"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-lg"
           >
             Go to homepage
           </Link>
         )}
+      </div>
+      <div className="relative">
+        <AphComFooter company="Mike Sport" />
       </div>
     </main>
   );
