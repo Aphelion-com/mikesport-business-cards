@@ -72,9 +72,13 @@ const Img = (p: React.ImgHTMLAttributes<HTMLImageElement>) => (
 
 function BrandMark({ src, label }: { src?: string | null; label?: string | null }) {
   return src ? (
-    <Img src={src} alt={label || "Mike Sport"} className="h-9 w-auto max-w-[170px] object-contain" />
+    <Img
+      src={src}
+      alt={label || "Mike Sport"}
+      className="h-12 w-auto max-w-[200px] object-contain sm:h-14"
+    />
   ) : (
-    <Wordmark className="!text-base" />
+    <Wordmark className="!text-lg sm:!text-xl" />
   );
 }
 
@@ -244,33 +248,41 @@ export default async function PublicCardPage({ params }: Props) {
       <TrackPageView slug={card.slug} />
 
       {/* C. Main hero card */}
-      <div className="animate-scale-in overflow-hidden rounded-[28px] border border-warmborder bg-white/85 shadow-soft backdrop-blur-md">
-        {/* refined thin top accent */}
-        <div className="h-[3px] bg-gradient-to-r from-brand-500 via-brand-400 to-gold opacity-90" />
-
-        <div className="px-6 pb-8 pt-8 sm:px-8">
-          {/* Centered brand mark */}
-          <div className="mb-7 flex animate-fade-in-up justify-center">
-            <BrandMark src={emblemSrc} label={card.companyName} />
+      <div className="relative animate-scale-in overflow-hidden rounded-[28px] border border-warmborder/80 bg-white/85 shadow-soft backdrop-blur-md">
+        {/* Soft warm header band with a subtle orange glow behind the brand */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-cream to-transparent" />
+          <div
+            className="pointer-events-none absolute left-1/2 top-[-46px] h-44 w-72 -translate-x-1/2 rounded-full opacity-70 blur-3xl"
+            style={{ background: "radial-gradient(circle, rgba(241,88,43,0.16) 0%, transparent 70%)" }}
+          />
+          <div className="relative flex justify-center px-6 pt-7">
+            <div className="animate-scale-in inline-flex items-center justify-center rounded-2xl border border-warmborder bg-white/90 px-5 py-3 shadow-sm backdrop-blur transition duration-500 hover:-translate-y-0.5 hover:shadow-md">
+              <BrandMark src={emblemSrc} label={card.companyName} />
+            </div>
           </div>
+        </div>
 
-          {/* Hero profile */}
-          <div className="flex justify-center">
+        <div className="px-6 pb-8 pt-2 sm:px-8">
+          {/* Hero profile — refined dual ring (outer orange, inner white) */}
+          <div className="mt-5 flex justify-center">
             <div className="relative animate-scale-in">
-              {/* gentle one-time ring pulse */}
-              <span className="absolute inset-0 rounded-full ring-2 ring-brand-500/40 animate-ring-once" />
-              <div className="rounded-full bg-white p-[3px] shadow-[0_14px_34px_-16px_rgba(25,25,25,0.5)] ring-2 ring-brand-500/60">
-                {card.profileImageUrl ? (
-                  <Img
-                    src={card.profileImageUrl}
-                    alt={card.profileImageAlt || card.fullName}
-                    className="h-32 w-32 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-32 w-32 items-center justify-center rounded-full bg-graphite text-4xl font-extrabold text-brand-500">
-                    {initials(card.fullName)}
-                  </div>
-                )}
+              {/* gentle one-time ring pulse on load */}
+              <span className="absolute inset-0 rounded-full ring-2 ring-brand-500/35 animate-ring-once" />
+              <div className="rounded-full bg-brand-500/80 p-[2px] shadow-[0_16px_38px_-18px_rgba(25,25,25,0.55)]">
+                <div className="rounded-full bg-white p-[3px]">
+                  {card.profileImageUrl ? (
+                    <Img
+                      src={card.profileImageUrl}
+                      alt={card.profileImageAlt || card.fullName}
+                      className="h-32 w-32 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-32 w-32 items-center justify-center rounded-full bg-graphite text-4xl font-extrabold text-brand-500">
+                      {initials(card.fullName)}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -318,7 +330,9 @@ export default async function PublicCardPage({ params }: Props) {
             <h2 className="mb-3 text-center text-sm font-bold text-graphite">
               Connect with {firstName}
             </h2>
-            <SaveContactButton slug={card.slug} />
+            <div id="hero-save">
+              <SaveContactButton slug={card.slug} />
+            </div>
             <div className="mt-2.5 grid grid-cols-3 gap-2.5">
               <PillButton href={`tel:${card.mobilePhone}`} icon={<Phone className="h-4 w-4 text-brand-600" />} label="Call" />
               <PillButton href={`mailto:${card.email}`} icon={<Mail className="h-4 w-4 text-brand-600" />} label="Email" />

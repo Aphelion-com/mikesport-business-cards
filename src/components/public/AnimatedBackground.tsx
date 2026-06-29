@@ -66,6 +66,16 @@ export default function AnimatedBackground() {
           className="absolute right-1/4 top-2/3 h-[16rem] w-[16rem] animate-blob-2 rounded-full opacity-40 blur-3xl"
           style={{ background: "radial-gradient(circle, rgba(201,154,74,0.08) 0%, transparent 70%)" }}
         />
+        {/* tiny soft floating accent dots */}
+        <span className="absolute left-[12%] top-[22%] h-2 w-2 animate-float rounded-full bg-brand-500/20" />
+        <span
+          className="absolute right-[16%] top-[40%] h-1.5 w-1.5 animate-float rounded-full bg-gold/30"
+          style={{ animationDelay: "1.2s" }}
+        />
+        <span
+          className="absolute left-[24%] bottom-[24%] h-1.5 w-1.5 animate-float rounded-full bg-brand-500/15"
+          style={{ animationDelay: "2.4s" }}
+        />
       </div>
     </div>
   );

@@ -57,8 +57,8 @@ export default function PublicCardExperience({
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-paper">
-      {/* Scroll progress */}
-      <div className="fixed inset-x-0 top-0 z-50 h-[3px]">
+      {/* Scroll progress — desktop only (kept off mobile so it never reads as a stray line) */}
+      <div className="fixed inset-x-0 top-0 z-50 hidden h-[2px] sm:block">
         <div
           ref={barRef}
           className="h-full bg-gradient-to-r from-brand-500 to-gold transition-[width] duration-150 ease-out"

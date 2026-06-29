@@ -32,6 +32,6 @@ jobs:
           push: true
           tags: |
             ghcr.io/aphelion-com/mikesport-business-cards:latest
-            ghcr.io/aphelion-com/mikesport-business-cards:dashboard-v9
+            ghcr.io/aphelion-com/mikesport-business-cards:dashboard-v10
           build-args: |
             NEXT_PUBLIC_BASE_URL=https://cards.mikesport.tech
