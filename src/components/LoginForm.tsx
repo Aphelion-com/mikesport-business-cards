@@ -66,8 +66,7 @@ export default function LoginForm({
           <Brand
             logoUrl={logoUrl}
             title={dashboardTitle}
-            onDark
-            imgClassName="h-12 w-auto max-w-[200px] object-contain drop-shadow"
+            imgClassName="h-12 w-auto max-w-[200px] object-contain"
           />
         ) : (
           <>
@@ -75,7 +74,7 @@ export default function LoginForm({
               MS
             </span>
             <div className="mt-4">
-              <Brand onDark className="!text-lg" />
+              <Brand className="!text-lg" />
             </div>
           </>
         )}
@@ -161,15 +160,13 @@ export default function LoginForm({
 
       {/* Footer */}
       <div className="footer-content-bottom mt-6">
-        <p className="footer-copyright !text-slate-400">
-          Mike Sport Digital Cards Admin
-        </p>
+        <p className="footer-copyright">Mike Sport Digital Cards Admin</p>
         <a
           href="https://aphcom.com"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Powered by AphCom — opens aphcom.com in a new tab"
-          className="aphcom-link !text-slate-400"
+          className="aphcom-link"
         >
           <span>Powered by</span>
           <span className="aphcom-word aphcom-animated">AphCom</span>

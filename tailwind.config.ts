@@ -24,12 +24,13 @@ const config: Config = {
         },
         // Warm neutrals for the premium corporate look.
         paper: "#faf8f4",
-        sand: "#f4f0ea",
+        sand: "#f3eee7",
+        cream: "#f3eee7",
         graphite: "#252525",
-        charcoal: "#161616",
+        charcoal: "#191919",
         gold: "#c99a4a",
-        warmborder: "#e4dcd2",
-        muted: "#706b64",
+        warmborder: "#e4d9ce",
+        muted: "#706a63",
         // Mike Sport ink — near-black for sidebars / dark surfaces.
         ink: {
           50: "#f6f6f7",

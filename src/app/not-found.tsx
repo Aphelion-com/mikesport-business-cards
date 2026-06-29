@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SearchX } from "lucide-react";
 import Wordmark from "@/components/Wordmark";
 import { getSettingsSafe } from "@/lib/settings";
-import CardBackground from "@/components/public/CardBackground";
+import AnimatedBackground from "@/components/public/AnimatedBackground";
 import AphComFooter from "@/components/public/AphComFooter";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +18,7 @@ export default async function NotFound() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-paper px-6 text-center">
-      <CardBackground />
+      <AnimatedBackground />
       <div className="relative w-full max-w-sm animate-scale-in rounded-4xl border border-warmborder bg-white/90 p-8 shadow-card backdrop-blur">
         <div className="flex justify-center">
           {emblemSrc ? (
