@@ -75,10 +75,10 @@ function BrandMark({ src, label }: { src?: string | null; label?: string | null 
     <Img
       src={src}
       alt={label || "Mike Sport"}
-      className="h-14 w-auto max-w-[230px] object-contain sm:h-[72px]"
+      className="h-[72px] w-auto max-w-[260px] object-contain sm:h-[104px]"
     />
   ) : (
-    <Wordmark className="!text-xl sm:!text-2xl" />
+    <Wordmark className="!text-2xl sm:!text-3xl" />
   );
 }
 
@@ -257,16 +257,19 @@ export default async function PublicCardPage({ params }: Props) {
             "0 24px 60px -30px rgba(25,25,25,0.30), 0 4px 14px -8px rgba(25,25,25,0.08)",
         }}
       >
-        <div className="px-6 pb-8 pt-9 sm:px-8 sm:pt-10">
+        {/* Subtle warm header layer — barely-visible depth, no orange */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-cream/60 via-cream/25 to-transparent" />
+
+        <div className="relative px-6 pb-8 pt-9 sm:px-8 sm:pt-10">
           {/* Centered emblem — no container, no line */}
           <div className="flex justify-center">
-            <div className="animate-fade-in-down transition duration-500 hover:-translate-y-0.5">
+            <div className="animate-fade-in-down transition duration-500 hover:-translate-y-1">
               <BrandMark src={emblemSrc} label={card.companyName} />
             </div>
           </div>
 
           {/* Hero profile — clean thin double ring */}
-          <div className="mt-7 flex justify-center">
+          <div className="mt-6 flex justify-center">
             <div
               className="relative animate-scale-in"
               style={{ animationDelay: "60ms" }}

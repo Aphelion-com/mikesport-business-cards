@@ -54,6 +54,15 @@ input[type="number"]::-webkit-inner-spin-button {
   }
 }
 
+/* Login input group — soft, rounded focus ring (no ugly square outline) */
+.login-field {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.login-field:focus-within {
+  border-color: #f1582b;
+  box-shadow: 0 0 0 4px rgba(241, 88, 43, 0.15);
+}
+
 /* Shine sweep for premium buttons */
 .btn-shine {
   position: relative;
