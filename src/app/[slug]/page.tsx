@@ -72,9 +72,9 @@ const Img = (p: React.ImgHTMLAttributes<HTMLImageElement>) => (
 
 function BrandMark({ src, label }: { src?: string | null; label?: string | null }) {
   return src ? (
-    <Img src={src} alt={label || "Mike Sport"} className="h-7 w-auto max-w-[140px] object-contain" />
+    <Img src={src} alt={label || "Mike Sport"} className="h-9 w-auto max-w-[170px] object-contain" />
   ) : (
-    <Wordmark className="!text-sm" />
+    <Wordmark className="!text-base" />
   );
 }
 
@@ -243,27 +243,23 @@ export default async function PublicCardPage({ params }: Props) {
     <PublicCardExperience>
       <TrackPageView slug={card.slug} />
 
-      {/* C. Main hero card with brand bar */}
-      <div className="animate-scale-in overflow-hidden rounded-[28px] border border-warmborder bg-white/80 shadow-card backdrop-blur-md">
-        {/* B. Brand bar */}
-        <div className="flex animate-fade-in items-center justify-between border-b border-warmborder/70 bg-cream/60 px-5 py-3">
-          <BrandMark src={emblemSrc} label={card.companyName} />
-          <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-600 shadow-sm ring-1 ring-warmborder">
-            Official Contact Card
-          </span>
-        </div>
+      {/* C. Main hero card */}
+      <div className="animate-scale-in overflow-hidden rounded-[28px] border border-warmborder bg-white/85 shadow-soft backdrop-blur-md">
+        {/* refined thin top accent */}
+        <div className="h-[3px] bg-gradient-to-r from-brand-500 via-brand-400 to-gold opacity-90" />
 
-        <div className="px-6 pb-8 pt-7 sm:px-8">
-          {/* Hero */}
+        <div className="px-6 pb-8 pt-8 sm:px-8">
+          {/* Centered brand mark */}
+          <div className="mb-7 flex animate-fade-in-up justify-center">
+            <BrandMark src={emblemSrc} label={card.companyName} />
+          </div>
+
+          {/* Hero profile */}
           <div className="flex justify-center">
             <div className="relative animate-scale-in">
-              {/* spinning shine ring */}
-              <span
-                className="absolute -inset-2 -z-10 animate-spin-slow rounded-full opacity-70 blur-[6px]"
-                style={{ background: "conic-gradient(from 0deg, #f1582b, #c99a4a, #f1582b, #c99a4a, #f1582b)" }}
-              />
-              <span className="absolute inset-0 -z-10 animate-pulse-glow rounded-full bg-brand-500/25 blur-2xl" />
-              <div className="rounded-full bg-white p-[3px] shadow-[0_12px_30px_-10px_rgba(241,88,43,0.55)]">
+              {/* gentle one-time ring pulse */}
+              <span className="absolute inset-0 rounded-full ring-2 ring-brand-500/40 animate-ring-once" />
+              <div className="rounded-full bg-white p-[3px] shadow-[0_14px_34px_-16px_rgba(25,25,25,0.5)] ring-2 ring-brand-500/60">
                 {card.profileImageUrl ? (
                   <Img
                     src={card.profileImageUrl}

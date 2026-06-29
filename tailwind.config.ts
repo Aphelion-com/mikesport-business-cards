@@ -102,6 +102,10 @@ const config: Config = {
           "0%,100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
         },
+        "ring-once": {
+          "0%": { opacity: "0.5", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(1.28)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.4s ease-out both",
@@ -115,6 +119,7 @@ const config: Config = {
         "pulse-glow": "pulse-glow 4s ease-in-out infinite",
         "spin-slow": "spin 16s linear infinite",
         float: "float 5s ease-in-out infinite",
+        "ring-once": "ring-once 1.8s ease-out 0.4s both",
       },
     },
   },
