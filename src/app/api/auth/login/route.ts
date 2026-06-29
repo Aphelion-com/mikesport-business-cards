@@ -4,6 +4,7 @@ import {
   createSessionToken,
   SESSION_COOKIE,
   SESSION_MAX_AGE,
+  sessionCookieOptions,
 } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -30,13 +31,7 @@ export async function POST(req: NextRequest) {
 
     const token = await createSessionToken(username);
     const res = NextResponse.json({ ok: true });
-    res.cookies.set(SESSION_COOKIE, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: SESSION_MAX_AGE,
-    });
+    res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions(SESSION_MAX_AGE));
     return res;
   } catch (err) {
     console.error("Login error:", err);

@@ -102,3 +102,34 @@ export function checkCredentials(username: string, password: string): boolean {
 }
 
 export const SESSION_MAX_AGE = SESSION_TTL_SECONDS;
+
+/**
+ * Whether the session cookie should carry the `Secure` flag.
+ *
+ * Controlled explicitly via AUTH_COOKIE_SECURE so the app can be tested over
+ * plain HTTP (e.g. http://145.223.101.109:3015) before the HTTPS domain is
+ * ready. A `Secure` cookie is silently dropped by browsers on HTTP, which
+ * would break login. Set AUTH_COOKIE_SECURE=true once HTTPS is in place.
+ */
+export function isCookieSecure(): boolean {
+  return process.env.AUTH_COOKIE_SECURE === "true";
+}
+
+type CookieOptions = {
+  httpOnly: true;
+  secure: boolean;
+  sameSite: "lax";
+  path: "/";
+  maxAge: number;
+};
+
+/** Shared cookie options for setting/clearing the session cookie. */
+export function sessionCookieOptions(maxAge: number): CookieOptions {
+  return {
+    httpOnly: true,
+    secure: isCookieSecure(),
+    sameSite: "lax",
+    path: "/",
+    maxAge,
+  };
+}

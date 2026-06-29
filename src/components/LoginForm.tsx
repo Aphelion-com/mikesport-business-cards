@@ -15,22 +15,38 @@ export default function LoginForm() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    // Abort the request after ~15s so the button never stays stuck forever.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
     try {
+      // Always use a RELATIVE URL so it works on any host (IP or domain).
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
+        signal: controller.signal,
       });
+
       const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        setError(data.error || "Login failed.");
-        setLoading(false);
+        setError(data.error || "Invalid username or password.");
         return;
       }
+
+      // Success: go to the dashboard and refresh server components.
       router.replace("/admin");
       router.refresh();
-    } catch {
-      setError("Network error. Please try again.");
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("Login timed out. Please check your connection and try again.");
+      } else {
+        setError("Network error. Please try again.");
+      }
+    } finally {
+      clearTimeout(timeout);
       setLoading(false);
     }
   }
