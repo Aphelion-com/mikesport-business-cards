@@ -75,10 +75,10 @@ function BrandMark({ src, label }: { src?: string | null; label?: string | null 
     <Img
       src={src}
       alt={label || "Mike Sport"}
-      className="h-12 w-auto max-w-[200px] object-contain sm:h-14"
+      className="h-14 w-auto max-w-[230px] object-contain sm:h-[72px]"
     />
   ) : (
-    <Wordmark className="!text-lg sm:!text-xl" />
+    <Wordmark className="!text-xl sm:!text-2xl" />
   );
 }
 
@@ -247,29 +247,33 @@ export default async function PublicCardPage({ params }: Props) {
     <PublicCardExperience>
       <TrackPageView slug={card.slug} />
 
-      {/* C. Main hero card */}
-      <div className="relative animate-scale-in overflow-hidden rounded-[28px] border border-warmborder/80 bg-white/85 shadow-soft backdrop-blur-md">
-        {/* Soft warm header band with a subtle orange glow behind the brand */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-cream to-transparent" />
-          <div
-            className="pointer-events-none absolute left-1/2 top-[-46px] h-44 w-72 -translate-x-1/2 rounded-full opacity-70 blur-3xl"
-            style={{ background: "radial-gradient(circle, rgba(241,88,43,0.16) 0%, transparent 70%)" }}
-          />
-          <div className="relative flex justify-center px-6 pt-7">
-            <div className="animate-scale-in inline-flex items-center justify-center rounded-2xl border border-warmborder bg-white/90 px-5 py-3 shadow-sm backdrop-blur transition duration-500 hover:-translate-y-0.5 hover:shadow-md">
+      {/* C. Main hero card — clean warm surface, no orange glow */}
+      <div
+        className="relative animate-fade-in-up overflow-hidden rounded-[32px] border backdrop-blur-md"
+        style={{
+          background: "linear-gradient(180deg, #FFFFFF 0%, #FBF8F3 100%)",
+          borderColor: "rgba(228,217,206,0.8)",
+          boxShadow:
+            "0 24px 60px -30px rgba(25,25,25,0.30), 0 4px 14px -8px rgba(25,25,25,0.08)",
+        }}
+      >
+        <div className="px-6 pb-8 pt-9 sm:px-8 sm:pt-10">
+          {/* Centered emblem — no container, no line */}
+          <div className="flex justify-center">
+            <div className="animate-fade-in-down transition duration-500 hover:-translate-y-0.5">
               <BrandMark src={emblemSrc} label={card.companyName} />
             </div>
           </div>
-        </div>
 
-        <div className="px-6 pb-8 pt-2 sm:px-8">
-          {/* Hero profile — refined dual ring (outer orange, inner white) */}
-          <div className="mt-5 flex justify-center">
-            <div className="relative animate-scale-in">
+          {/* Hero profile — clean thin double ring */}
+          <div className="mt-7 flex justify-center">
+            <div
+              className="relative animate-scale-in"
+              style={{ animationDelay: "60ms" }}
+            >
               {/* gentle one-time ring pulse on load */}
-              <span className="absolute inset-0 rounded-full ring-2 ring-brand-500/35 animate-ring-once" />
-              <div className="rounded-full bg-brand-500/80 p-[2px] shadow-[0_16px_38px_-18px_rgba(25,25,25,0.55)]">
+              <span className="absolute inset-0 rounded-full ring-2 ring-brand-500/30 animate-ring-once" />
+              <div className="rounded-full bg-brand-500 p-[2px] shadow-[0_14px_30px_-16px_rgba(25,25,25,0.45)]">
                 <div className="rounded-full bg-white p-[3px]">
                   {card.profileImageUrl ? (
                     <Img
@@ -290,13 +294,13 @@ export default async function PublicCardPage({ params }: Props) {
           <div className="mt-5 text-center">
             <h1
               className="animate-fade-in-up text-[26px] font-bold leading-tight tracking-tight text-graphite"
-              style={{ animationDelay: "80ms" }}
+              style={{ animationDelay: "120ms" }}
             >
               {card.fullName}
             </h1>
             <div
               className="mt-2.5 flex animate-fade-in-up flex-wrap items-center justify-center gap-2"
-              style={{ animationDelay: "140ms" }}
+              style={{ animationDelay: "180ms" }}
             >
               <span className="rounded-full bg-brand-500 px-3.5 py-1 text-sm font-semibold text-white shadow-sm">
                 {card.position}
@@ -310,15 +314,15 @@ export default async function PublicCardPage({ params }: Props) {
             {card.companyName && (
               <p
                 className="mt-2 animate-fade-in-up text-sm font-semibold text-graphite"
-                style={{ animationDelay: "180ms" }}
+                style={{ animationDelay: "220ms" }}
               >
                 {card.companyName}
               </p>
             )}
             {card.description && (
               <p
-                className="mx-auto mt-4 max-w-md animate-fade-in-up rounded-2xl bg-cream/60 px-4 py-3 text-center text-[14px] leading-relaxed text-slate-600 ring-1 ring-warmborder/60"
-                style={{ animationDelay: "220ms" }}
+                className="mx-auto mt-4 max-w-md animate-fade-in-up px-2 text-center text-[14.5px] leading-relaxed text-slate-600"
+                style={{ animationDelay: "260ms" }}
               >
                 {card.description}
               </p>
@@ -326,7 +330,7 @@ export default async function PublicCardPage({ params }: Props) {
           </div>
 
           {/* D. Quick actions */}
-          <div className="mt-7 animate-fade-in-up" style={{ animationDelay: "280ms" }}>
+          <div className="mt-7 animate-fade-in-up" style={{ animationDelay: "320ms" }}>
             <h2 className="mb-3 text-center text-sm font-bold text-graphite">
               Connect with {firstName}
             </h2>
