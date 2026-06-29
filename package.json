@@ -12,7 +12,7 @@
     "seed": "prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\",\"moduleResolution\":\"node\"} prisma/seed.ts"
+    "seed": "node prisma/seed.cjs"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

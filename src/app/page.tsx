@@ -1,22 +1,33 @@
 import Link from "next/link";
-import { ArrowRight, IdCard } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import Wordmark from "@/components/Wordmark";
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-brand-700 via-brand-600 to-brand-800 px-6 text-center text-white">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
-        <IdCard className="h-8 w-8" />
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-ink-950 px-6 text-center">
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-500" />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-10"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, rgba(249,115,22,0.5) 0 2px, transparent 2px 22px)",
+        }}
+      />
+      <div className="relative">
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500 text-2xl font-extrabold text-ink-950">
+          MS
+        </span>
       </div>
-      <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
-        Mike Sport
-      </h1>
-      <p className="mt-2 max-w-md text-brand-100">
+      <div className="relative mt-6">
+        <Wordmark onDark className="!text-xl" />
+      </div>
+      <p className="relative mt-3 max-w-md text-slate-400">
         Digital Business Cards — professional, shareable contact pages for the
         Mike Sport team.
       </p>
       <Link
         href="/admin"
-        className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-700 shadow-lg transition hover:bg-brand-50"
+        className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-ink-950 shadow-lg transition hover:bg-brand-400"
       >
         Open Admin Dashboard
         <ArrowRight className="h-4 w-4" />

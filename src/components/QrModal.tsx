@@ -8,10 +8,12 @@ export default function QrModal({
   url,
   name,
   onClose,
+  onDownload,
 }: {
   url: string;
   name: string;
   onClose: () => void;
+  onDownload?: () => void;
 }) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
 
@@ -21,7 +23,7 @@ export default function QrModal({
       width: 640,
       margin: 2,
       errorCorrectionLevel: "H",
-      color: { dark: "#0f172a", light: "#ffffff" },
+      color: { dark: "#0c0d0f", light: "#ffffff" },
     })
       .then((d) => {
         if (active) setDataUrl(d);
@@ -41,6 +43,7 @@ export default function QrModal({
 
   function download() {
     if (!dataUrl) return;
+    onDownload?.();
     const safe = name.replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_+|_+$/g, "");
     const link = document.createElement("a");
     link.href = dataUrl;
@@ -88,7 +91,7 @@ export default function QrModal({
         <button
           onClick={download}
           disabled={!dataUrl}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 px-4 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-ink-950 px-4 py-3 font-semibold text-white transition hover:bg-ink-900 disabled:opacity-50"
         >
           <Download className="h-5 w-5" />
           Download PNG

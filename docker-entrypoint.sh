@@ -1,13 +1,15 @@
 #!/bin/sh
 set -e
 
-echo "▶ Waiting for the database to be ready..."
+echo "▶ Waiting for the database and applying schema..."
 
-# Sync the Prisma schema to the database (creates tables if missing).
+# Apply the Prisma schema to the database (creates/updates tables).
+# NON-destructive: no --force-reset, no --accept-data-loss. Our schema changes
+# are additive (new card_events table), so this is safe.
 # Retries to handle the DB container still starting up.
 ATTEMPTS=0
 MAX_ATTEMPTS=30
-until npx prisma db push --skip-generate --accept-data-loss; do
+until npx prisma db push --skip-generate; do
   ATTEMPTS=$((ATTEMPTS + 1))
   if [ "$ATTEMPTS" -ge "$MAX_ATTEMPTS" ]; then
     echo "✖ Database not reachable after $MAX_ATTEMPTS attempts. Exiting."
@@ -17,13 +19,20 @@ until npx prisma db push --skip-generate --accept-data-loss; do
   sleep 2
 done
 
-echo "✔ Schema is in sync."
+echo "✔ Database ready"
+echo "✔ Prisma schema applied"
 
-# Seed data (idempotent — uses upsert). Set SKIP_SEED=1 to disable.
-if [ "$SKIP_SEED" != "1" ]; then
-  echo "▶ Seeding database..."
-  npx prisma db seed || echo "⚠ Seed step skipped or failed (continuing)."
+# Seed data — idempotent (upsert by slug), never duplicates on restart.
+# Failure here must NOT crash startup. Set SKIP_SEED=1 to disable.
+if [ "$SKIP_SEED" = "1" ]; then
+  echo "↷ Seed skipped (SKIP_SEED=1)"
+else
+  if node prisma/seed.cjs; then
+    echo "✔ Seed completed"
+  else
+    echo "⚠ Seed step failed (continuing without crashing)"
+  fi
 fi
 
-echo "▶ Starting application..."
+echo "▶ Starting Next.js app"
 exec "$@"

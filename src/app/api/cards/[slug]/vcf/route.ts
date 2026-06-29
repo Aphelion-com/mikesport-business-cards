@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { buildVCard, vcardFilename } from "@/lib/vcard";
+import { buildVCard } from "@/lib/vcard";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +23,8 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": "text/vcard; charset=utf-8",
-        "Content-Disposition": `attachment; filename="${vcardFilename(
-          card.fullName
-        )}"`,
+        // Filename based on the slug, e.g. rawad-halloun.vcf
+        "Content-Disposition": `attachment; filename="${card.slug}.vcf"`,
         "Cache-Control": "no-store",
       },
     });

@@ -27,6 +27,32 @@ model Card {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  events CardEvent[]
+
   @@index([slug])
   @@map("cards")
+}
+
+enum CardEventType {
+  PAGE_VIEW
+  SAVE_CONTACT
+  QR_DOWNLOAD
+  COPY_URL
+  PREVIEW_OPEN
+}
+
+model CardEvent {
+  id        String        @id @default(cuid())
+  cardId    String
+  type      CardEventType
+  userAgent String?
+  referrer  String?
+  createdAt DateTime      @default(now())
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@index([cardId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("card_events")
 }
