@@ -146,7 +146,7 @@ export default function CardsManager({
         </div>
         <Link
           href="/admin/cards/new"
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-ink-950 transition hover:bg-brand-400"
+          className="btn-shine inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-md"
         >
           <Plus className="h-4 w-4" />
           New Card

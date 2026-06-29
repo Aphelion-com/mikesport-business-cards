@@ -26,7 +26,7 @@ export default function SaveContactButton({ slug }: { slug: string }) {
   return (
     <button
       onClick={handleSave}
-      className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-brand-500/30 transition active:scale-[0.98] hover:-translate-y-0.5 hover:bg-brand-600 hover:shadow-xl"
+      className="btn-shine group flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-brand-500/30 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.98]"
     >
       {saved ? (
         <>
@@ -35,7 +35,7 @@ export default function SaveContactButton({ slug }: { slug: string }) {
         </>
       ) : (
         <>
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 transition duration-300 group-hover:-translate-y-0.5 group-hover:bg-white/30">
             <Download className="h-4 w-4" />
           </span>
           Save Contact

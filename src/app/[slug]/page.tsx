@@ -18,7 +18,7 @@ import { getSettingsSafe } from "@/lib/settings";
 import SaveContactButton from "@/components/SaveContactButton";
 import TrackPageView from "@/components/TrackPageView";
 import Wordmark from "@/components/Wordmark";
-import CardBackground from "@/components/public/CardBackground";
+import PublicCardExperience from "@/components/public/PublicCardExperience";
 import Reveal from "@/components/public/Reveal";
 import AphComFooter from "@/components/public/AphComFooter";
 
@@ -150,12 +150,34 @@ function PillButton({
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-paper">
-      <CardBackground />
-      <div className="relative mx-auto max-w-md px-4 py-9 sm:py-12 lg:max-w-xl">
-        {children}
-      </div>
+    <main>
+      <PublicCardExperience>{children}</PublicCardExperience>
     </main>
+  );
+}
+
+function BrandHeader({
+  emblemSrc,
+  company,
+}: {
+  emblemSrc?: string | null;
+  company?: string | null;
+}) {
+  return (
+    <div className="mb-8 flex animate-fade-in flex-col items-center gap-3">
+      <div className="group inline-flex items-center gap-2 rounded-full border border-warmborder bg-white/70 px-4 py-2 shadow-sm backdrop-blur transition duration-500 hover:-translate-y-0.5 hover:shadow-md">
+        {emblemSrc ? (
+          <Img
+            src={emblemSrc}
+            alt={company || "Mike Sport"}
+            className="h-7 w-auto max-w-[150px] object-contain transition duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <Wordmark className="!text-sm" />
+        )}
+      </div>
+      <span className="accent-line block h-[3px] w-12 rounded-full" />
+    </div>
   );
 }
 
@@ -266,17 +288,9 @@ export default async function PublicCardPage({ params }: Props) {
     <Shell>
       <TrackPageView slug={card.slug} />
 
-      {/* B. Brand mark — small, elegant, animated (no plain title text) */}
+      {/* B. Brand header — premium pill + animated accent line */}
       {emblemPosition !== "footer" && (
-        <div className="mb-7 flex animate-fade-in flex-col items-center gap-2.5">
-          <div className="group transition duration-500 hover:-translate-y-0.5">
-            <Emblem
-              src={emblemSrc}
-              className="h-10 w-auto max-w-[180px] object-contain transition duration-500 group-hover:scale-105"
-            />
-          </div>
-          <span className="block h-[3px] w-10 rounded-full bg-gradient-to-r from-brand-500 to-gold" />
-        </div>
+        <BrandHeader emblemSrc={emblemSrc} company={card.companyName} />
       )}
 
       {/* C. Main profile card */}
