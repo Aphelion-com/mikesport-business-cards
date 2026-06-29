@@ -15,10 +15,29 @@ import {
   Share2,
   FileText,
   ToggleRight,
+  Linkedin,
+  Instagram,
+  Facebook,
 } from "lucide-react";
 import { slugify } from "@/lib/slug";
 import ImageUpload from "@/components/admin/ImageUpload";
 import Toast, { type ToastState } from "@/components/admin/Toast";
+
+function XGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" />
+    </svg>
+  );
+}
+
+function TikTokGlyph({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M16.6 5.82a4.28 4.28 0 0 1-1.05-2.82h-3.1v12.4a2.5 2.5 0 1 1-2.5-2.5c.26 0 .51.04.75.11V9.8a5.6 5.6 0 1 0 4.85 5.55V9.01a7.36 7.36 0 0 0 4.3 1.38V7.3a4.28 4.28 0 0 1-3.15-1.48Z" />
+    </svg>
+  );
+}
 
 type Mode = "create" | "edit";
 
@@ -40,6 +59,7 @@ type FormState = {
   profileImageAlt: string;
   linkedinUrl: string;
   instagramUrl: string;
+  xUrl: string;
   facebookUrl: string;
   tiktokUrl: string;
   displayOrder: string;
@@ -65,6 +85,7 @@ function fromCard(card?: Card): FormState {
     profileImageAlt: card?.profileImageAlt ?? "",
     linkedinUrl: card?.linkedinUrl ?? "",
     instagramUrl: card?.instagramUrl ?? "",
+    xUrl: card?.xUrl ?? "",
     facebookUrl: card?.facebookUrl ?? "",
     tiktokUrl: card?.tiktokUrl ?? "",
     displayOrder: card?.displayOrder != null ? String(card.displayOrder) : "0",
@@ -375,11 +396,11 @@ export default function CardForm({
         </p>
       </Section>
 
-      {/* Social links */}
+      {/* Social Links */}
       <Section
         icon={<Share2 className="h-5 w-5" />}
-        title="Social links"
-        subtitle="Optional"
+        title="Social Links"
+        subtitle="Optional — only filled links appear on the public card"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="LinkedIn URL" error={err("linkedinUrl")}>
@@ -387,7 +408,7 @@ export default function CardForm({
               className={inputClass}
               value={form.linkedinUrl}
               onChange={(e) => update("linkedinUrl", e.target.value)}
-              placeholder="https://linkedin.com/in/…"
+              placeholder="https://www.linkedin.com/in/name"
             />
           </Field>
           <Field label="Instagram URL" error={err("instagramUrl")}>
@@ -395,7 +416,15 @@ export default function CardForm({
               className={inputClass}
               value={form.instagramUrl}
               onChange={(e) => update("instagramUrl", e.target.value)}
-              placeholder="https://instagram.com/…"
+              placeholder="https://www.instagram.com/name"
+            />
+          </Field>
+          <Field label="X URL" error={err("xUrl")}>
+            <input
+              className={inputClass}
+              value={form.xUrl}
+              onChange={(e) => update("xUrl", e.target.value)}
+              placeholder="https://x.com/name"
             />
           </Field>
           <Field label="Facebook URL" error={err("facebookUrl")}>
@@ -403,7 +432,7 @@ export default function CardForm({
               className={inputClass}
               value={form.facebookUrl}
               onChange={(e) => update("facebookUrl", e.target.value)}
-              placeholder="https://facebook.com/…"
+              placeholder="https://www.facebook.com/name"
             />
           </Field>
           <Field label="TikTok URL" error={err("tiktokUrl")}>
@@ -411,9 +440,33 @@ export default function CardForm({
               className={inputClass}
               value={form.tiktokUrl}
               onChange={(e) => update("tiktokUrl", e.target.value)}
-              placeholder="https://tiktok.com/@…"
+              placeholder="https://www.tiktok.com/@name"
             />
           </Field>
+        </div>
+
+        {/* Filled-icon preview */}
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-xs font-medium text-slate-400">Preview:</span>
+          {[
+            { on: !!form.linkedinUrl.trim(), icon: <Linkedin className="h-4 w-4" />, label: "LinkedIn" },
+            { on: !!form.instagramUrl.trim(), icon: <Instagram className="h-4 w-4" />, label: "Instagram" },
+            { on: !!form.xUrl.trim(), icon: <XGlyph className="h-3.5 w-3.5" />, label: "X" },
+            { on: !!form.facebookUrl.trim(), icon: <Facebook className="h-4 w-4" />, label: "Facebook" },
+            { on: !!form.tiktokUrl.trim(), icon: <TikTokGlyph className="h-4 w-4" />, label: "TikTok" },
+          ].map((s) => (
+            <span
+              key={s.label}
+              title={s.label}
+              className={`flex h-9 w-9 items-center justify-center rounded-full border transition ${
+                s.on
+                  ? "border-brand-300 bg-brand-50 text-brand-600"
+                  : "border-slate-200 text-slate-300"
+              }`}
+            >
+              {s.icon}
+            </span>
+          ))}
         </div>
       </Section>
 

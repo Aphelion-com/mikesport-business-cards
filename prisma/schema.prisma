@@ -26,6 +26,7 @@ model Card {
   profileImageAlt String?
   linkedinUrl     String?
   instagramUrl    String?
+  xUrl            String?
   facebookUrl     String?
   tiktokUrl       String?
   displayOrder    Int      @default(0)
@@ -45,6 +46,7 @@ enum CardEventType {
   QR_DOWNLOAD
   COPY_URL
   PREVIEW_OPEN
+  SOCIAL_CLICK
 }
 
 model CardEvent {

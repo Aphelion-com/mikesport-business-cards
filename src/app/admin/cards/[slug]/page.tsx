@@ -12,6 +12,7 @@ import {
   Smartphone,
   Phone,
   Activity,
+  Share2,
 } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import CardDetailActions from "@/components/admin/CardDetailActions";
@@ -115,7 +116,7 @@ export default async function CardDetailsPage({
       </div>
 
       {/* Stat tiles */}
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <MiniStat icon={<Eye className="h-4 w-4" />} label="Views" value={counts.views} />
         <MiniStat
           icon={<Download className="h-4 w-4" />}
@@ -136,6 +137,11 @@ export default async function CardDetailsPage({
           icon={<ExternalLink className="h-4 w-4" />}
           label="Previews"
           value={counts.previews}
+        />
+        <MiniStat
+          icon={<Share2 className="h-4 w-4" />}
+          label="Social clicks"
+          value={counts.socialClicks}
         />
       </div>
 

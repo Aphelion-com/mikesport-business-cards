@@ -89,6 +89,7 @@ export const cardSchema = z.object({
   profileImageAlt: optionalString,
   linkedinUrl: optionalUrl,
   instagramUrl: optionalUrl,
+  xUrl: optionalUrl,
   facebookUrl: optionalUrl,
   tiktokUrl: optionalUrl,
   displayOrder: z

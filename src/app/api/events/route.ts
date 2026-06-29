@@ -10,6 +10,7 @@ const ALLOWED: CardEventType[] = [
   "QR_DOWNLOAD",
   "COPY_URL",
   "PREVIEW_OPEN",
+  "SOCIAL_CLICK",
 ];
 
 /**

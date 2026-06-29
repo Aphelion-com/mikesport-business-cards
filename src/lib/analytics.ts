@@ -7,6 +7,7 @@ export type CardStatCounts = {
   qrDownloads: number;
   copies: number;
   previews: number;
+  socialClicks: number;
 };
 
 export type CardWithStats = Card & { stats: CardStatCounts };
@@ -17,6 +18,7 @@ const emptyCounts = (): CardStatCounts => ({
   qrDownloads: 0,
   copies: 0,
   previews: 0,
+  socialClicks: 0,
 });
 
 function applyCount(
@@ -39,6 +41,9 @@ function applyCount(
       break;
     case "PREVIEW_OPEN":
       counts.previews += n;
+      break;
+    case "SOCIAL_CLICK":
+      counts.socialClicks += n;
       break;
   }
 }

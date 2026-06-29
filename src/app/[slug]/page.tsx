@@ -8,9 +8,6 @@ import {
   MapPin,
   Building2,
   Briefcase,
-  Linkedin,
-  Instagram,
-  Facebook,
   Clock,
   ChevronRight,
 } from "lucide-react";
@@ -24,6 +21,7 @@ import AnimatedBackground from "@/components/public/AnimatedBackground";
 import Reveal from "@/components/public/Reveal";
 import StickySaveContact from "@/components/public/StickySaveContact";
 import AphComFooter from "@/components/public/AphComFooter";
+import SocialLinks, { type SocialNetwork } from "@/components/public/SocialLinks";
 
 export const dynamic = "force-dynamic";
 
@@ -55,14 +53,6 @@ function initials(name: string): string {
     .slice(0, 2)
     .map((n) => n[0]?.toUpperCase() ?? "")
     .join("");
-}
-
-function TikTokIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M16.6 5.82a4.28 4.28 0 0 1-1.05-2.82h-3.1v12.4a2.5 2.5 0 1 1-2.5-2.5c.26 0 .51.04.75.11V9.8a5.6 5.6 0 1 0 4.85 5.55V9.01a7.36 7.36 0 0 0 4.3 1.38V7.3a4.28 4.28 0 0 1-3.15-1.48Z" />
-    </svg>
-  );
 }
 
 const Img = (p: React.ImgHTMLAttributes<HTMLImageElement>) => (
@@ -191,12 +181,13 @@ export default async function PublicCardPage({ params }: Props) {
     );
   }
 
-  const socials = [
-    { url: card.linkedinUrl, icon: <Linkedin className="h-5 w-5" />, label: "LinkedIn" },
-    { url: card.instagramUrl, icon: <Instagram className="h-5 w-5" />, label: "Instagram" },
-    { url: card.facebookUrl, icon: <Facebook className="h-5 w-5" />, label: "Facebook" },
-    { url: card.tiktokUrl, icon: <TikTokIcon className="h-5 w-5" />, label: "TikTok" },
-  ].filter((s) => s.url);
+  const socialItems = [
+    { network: "linkedin" as const, href: card.linkedinUrl },
+    { network: "instagram" as const, href: card.instagramUrl },
+    { network: "x" as const, href: card.xUrl },
+    { network: "facebook" as const, href: card.facebookUrl },
+    { network: "tiktok" as const, href: card.tiktokUrl },
+  ].filter((s): s is { network: SocialNetwork; href: string } => Boolean(s.href));
 
   const location = card.address || card.officeLocation;
 
@@ -387,28 +378,13 @@ export default async function PublicCardPage({ params }: Props) {
         </div>
       )}
 
-      {/* Social */}
-      {socials.length > 0 && (
+      {/* Social — only rendered when at least one link exists */}
+      {socialItems.length > 0 && (
         <div className="mt-9">
           <Reveal>
-            <SectionHeading>Follow Mike Sport</SectionHeading>
+            <SectionHeading>Connect Online</SectionHeading>
           </Reveal>
-          <Reveal delay={80}>
-            <div className="flex justify-center gap-3">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.url as string}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  className="flex h-12 w-12 items-center justify-center rounded-full border border-warmborder bg-white text-graphite transition duration-300 hover:-translate-y-1 hover:rotate-3 hover:border-brand-300 hover:bg-brand-500 hover:text-white hover:shadow-lg"
-                >
-                  {s.icon}
-                </a>
-              ))}
-            </div>
-          </Reveal>
+          <SocialLinks slug={card.slug} items={socialItems} />
         </div>
       )}
 

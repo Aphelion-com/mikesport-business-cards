@@ -32,4 +32,5 @@ export const EVENT_LABEL: Record<CardEventType, string> = {
   QR_DOWNLOAD: "QR downloaded",
   COPY_URL: "Copied URL",
   PREVIEW_OPEN: "Opened preview",
+  SOCIAL_CLICK: "Social click",
 };
