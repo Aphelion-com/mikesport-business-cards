@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { Download, Copy, Check, ExternalLink, Loader2 } from "lucide-react";
 import { track } from "@/lib/track";
+import { copyToClipboard } from "@/lib/clipboard";
+import { previewUrl } from "@/lib/publicUrl";
+import Toast, { type ToastState } from "@/components/admin/Toast";
 
 export default function CardDetailActions({
   slug,
@@ -16,6 +19,7 @@ export default function CardDetailActions({
 }) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [toast, setToast] = useState<ToastState>(null);
 
   useEffect(() => {
     let active = true;
@@ -44,19 +48,24 @@ export default function CardDetailActions({
   }
 
   async function copyUrl() {
-    try {
-      await navigator.clipboard.writeText(publicUrl);
-      track(slug, "COPY_URL");
+    const ok = await copyToClipboard(publicUrl);
+    if (ok) {
       setCopied(true);
+      setToast({ message: "Link copied.", variant: "success" });
+      track(slug, "COPY_URL"); // tracking must not block copy
       setTimeout(() => setCopied(false), 1800);
-    } catch {
-      /* ignore */
+    } else {
+      setToast({
+        message: "Could not copy. Please copy it manually.",
+        variant: "error",
+      });
     }
   }
 
   function preview() {
     track(slug, "PREVIEW_OPEN");
-    window.open(publicUrl, "_blank", "noopener,noreferrer");
+    // Current-origin URL so it works on IP now and the domain later.
+    window.open(previewUrl(slug), "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -111,6 +120,8 @@ export default function CardDetailActions({
           </button>
         </div>
       </div>
+
+      <Toast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 }

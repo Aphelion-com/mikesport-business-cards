@@ -24,6 +24,8 @@ import QrModal from "@/components/QrModal";
 import Toast, { type ToastState } from "@/components/admin/Toast";
 import { track } from "@/lib/track";
 import { timeAgo } from "@/lib/format";
+import { copyToClipboard } from "@/lib/clipboard";
+import { officialUrl, previewUrl } from "@/lib/publicUrl";
 import type { CardWithStats } from "@/lib/analytics";
 
 export default function CardsManager({
@@ -42,8 +44,8 @@ export default function CardsManager({
   const [busySlug, setBusySlug] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState>(null);
 
-  const base = baseUrl.replace(/\/$/, "");
-  const urlFor = (slug: string) => `${base}/${slug}`;
+  // Official URL (NEXT_PUBLIC_BASE_URL / domain) is what we share + QR.
+  const urlFor = (slug: string) => officialUrl(slug) || `${baseUrl.replace(/\/$/, "")}/${slug}`;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -57,19 +59,21 @@ export default function CardsManager({
   }, [cards, query]);
 
   async function copyUrl(card: CardWithStats) {
-    try {
-      await navigator.clipboard.writeText(urlFor(card.slug));
+    const ok = await copyToClipboard(urlFor(card.slug));
+    if (ok) {
       setCopiedSlug(card.slug);
-      track(card.slug, "COPY_URL");
+      setToast({ message: "Link copied.", variant: "success" });
+      track(card.slug, "COPY_URL"); // tracking must not block copy
       setTimeout(() => setCopiedSlug(null), 1800);
-    } catch {
-      setToast({ message: "Could not copy to clipboard.", variant: "error" });
+    } else {
+      setToast({ message: "Could not copy. Please copy it manually.", variant: "error" });
     }
   }
 
   function openPreview(card: CardWithStats) {
     track(card.slug, "PREVIEW_OPEN");
-    window.open(urlFor(card.slug), "_blank", "noopener,noreferrer");
+    // Use current-origin URL so preview works on IP now AND the domain later.
+    window.open(previewUrl(card.slug), "_blank", "noopener,noreferrer");
   }
 
   async function toggleActive(card: CardWithStats) {

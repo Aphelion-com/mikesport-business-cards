@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildVCard } from "@/lib/vcard";
+import { getBaseUrl } from "@/lib/baseUrl";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export async function GET(
       return NextResponse.json({ error: "Card not found" }, { status: 404 });
     }
 
-    const vcf = buildVCard(card);
+    const vcf = buildVCard(card, getBaseUrl());
 
     return new NextResponse(vcf, {
       status: 200,

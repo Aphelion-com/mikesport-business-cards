@@ -134,14 +134,14 @@ export default function AdminShell({
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-paper">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-ink-950 md:flex">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col bg-charcoal md:flex">
         {SidebarContent}
       </aside>
 
       {/* Mobile top header */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-ink-900 bg-ink-950 px-4 md:hidden">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-charcoal px-4 md:hidden">
         <button
           onClick={() => setDrawerOpen(true)}
           className="flex h-9 w-9 items-center justify-center rounded-lg text-white transition hover:bg-white/10"
@@ -170,10 +170,10 @@ export default function AdminShell({
       {drawerOpen && (
         <div className="md:hidden">
           <div
-            className="fixed inset-0 z-40 animate-fade-in bg-ink-950/60 backdrop-blur-sm"
+            className="fixed inset-0 z-40 animate-fade-in bg-charcoal/60 backdrop-blur-sm"
             onClick={() => setDrawerOpen(false)}
           />
-          <aside className="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[82%] animate-slide-in-left flex-col bg-ink-950">
+          <aside className="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[82%] animate-slide-in-left flex-col bg-charcoal">
             <button
               onClick={() => setDrawerOpen(false)}
               className="absolute right-3 top-4 flex h-9 w-9 items-center justify-center rounded-lg text-slate-300 hover:bg-white/10 hover:text-white"

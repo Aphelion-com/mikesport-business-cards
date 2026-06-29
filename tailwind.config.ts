@@ -8,20 +8,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Mike Sport accent — orange.
+        // Mike Sport accent — warm orange (#F58220).
         brand: {
-          50: "#fff7ed",
-          100: "#ffedd5",
-          200: "#fed7aa",
-          300: "#fdba74",
-          400: "#fb923c",
-          500: "#f97316",
-          600: "#ea580c",
-          700: "#c2410c",
-          800: "#9a3412",
-          900: "#7c2d12",
-          950: "#431407",
+          50: "#fef4ec",
+          100: "#fde4d0",
+          200: "#fac79e",
+          300: "#f8a96c",
+          400: "#f69544",
+          500: "#f58220",
+          600: "#dd6c12",
+          700: "#b8550f",
+          800: "#8f4210",
+          900: "#73360f",
+          950: "#3f1c07",
         },
+        // Warm neutrals for the premium corporate look.
+        paper: "#f7f7f5",
+        sand: "#ecebe6",
+        graphite: "#252525",
+        charcoal: "#151515",
+        gold: "#c99a4a",
         // Mike Sport ink — near-black for sidebars / dark surfaces.
         ink: {
           50: "#f6f6f7",
@@ -71,6 +77,20 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        "blob-1": {
+          "0%,100%": { transform: "translate(0,0) scale(1)" },
+          "33%": { transform: "translate(24px,-30px) scale(1.08)" },
+          "66%": { transform: "translate(-18px,18px) scale(0.95)" },
+        },
+        "blob-2": {
+          "0%,100%": { transform: "translate(0,0) scale(1)" },
+          "33%": { transform: "translate(-28px,20px) scale(1.05)" },
+          "66%": { transform: "translate(22px,-16px) scale(0.92)" },
+        },
+        "count-up": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.4s ease-out both",
@@ -78,6 +98,9 @@ const config: Config = {
         "scale-in": "scale-in 0.45s cubic-bezier(0.22,1,0.36,1) both",
         "slide-in-left": "slide-in-left 0.4s ease-out both",
         "grow-bar": "grow-bar 0.6s ease-out both",
+        "blob-1": "blob-1 18s ease-in-out infinite",
+        "blob-2": "blob-2 22s ease-in-out infinite",
+        "count-up": "count-up 0.5s ease-out both",
       },
     },
   },

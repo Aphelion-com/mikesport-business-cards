@@ -24,8 +24,10 @@ function splitName(fullName: string): { family: string; given: string } {
 
 /**
  * Build a valid vCard 3.0 string for a card.
+ * `baseUrl` is used to turn a relative profile image (/api/uploads/…) into an
+ * absolute URL for the PHOTO field. Missing image never breaks the vCard.
  */
-export function buildVCard(card: Card): string {
+export function buildVCard(card: Card, baseUrl?: string): string {
   const { family, given } = splitName(card.fullName);
 
   const org = card.companyName || ORGANIZATION;
@@ -63,7 +65,11 @@ export function buildVCard(card: Card): string {
     lines.push(`ADR;TYPE=WORK:;;${esc(card.address)};;;;`);
   }
   if (card.profileImageUrl) {
-    lines.push(`PHOTO;VALUE=URI:${esc(card.profileImageUrl)}`);
+    const photo =
+      card.profileImageUrl.startsWith("/") && baseUrl
+        ? `${baseUrl.replace(/\/$/, "")}${card.profileImageUrl}`
+        : card.profileImageUrl;
+    lines.push(`PHOTO;VALUE=URI:${esc(photo)}`);
   }
   if (card.description) {
     lines.push(`NOTE:${esc(card.description)}`);

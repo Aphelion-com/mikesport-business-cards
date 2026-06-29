@@ -42,6 +42,7 @@ type FormState = {
   instagramUrl: string;
   facebookUrl: string;
   tiktokUrl: string;
+  displayOrder: string;
   isActive: boolean;
 };
 
@@ -66,6 +67,7 @@ function fromCard(card?: Card): FormState {
     instagramUrl: card?.instagramUrl ?? "",
     facebookUrl: card?.facebookUrl ?? "",
     tiktokUrl: card?.tiktokUrl ?? "",
+    displayOrder: card?.displayOrder != null ? String(card.displayOrder) : "0",
     isActive: card?.isActive ?? true,
   };
 }
@@ -415,8 +417,8 @@ export default function CardForm({
         </div>
       </Section>
 
-      {/* Status */}
-      <Section icon={<ToggleRight className="h-5 w-5" />} title="Status">
+      {/* Status & ordering */}
+      <Section icon={<ToggleRight className="h-5 w-5" />} title="Status & ordering">
         <div className="flex items-center justify-between">
           <p className="text-sm text-slate-500">
             Inactive cards show a polished “unavailable” page publicly.
@@ -436,6 +438,20 @@ export default function CardForm({
               }`}
             />
           </button>
+        </div>
+        <div className="mt-4 max-w-xs">
+          <Field label="Display order" error={err("displayOrder")}>
+            <input
+              type="number"
+              className={inputClass}
+              value={form.displayOrder}
+              onChange={(e) => update("displayOrder", e.target.value)}
+              placeholder="0"
+            />
+          </Field>
+          <p className="mt-1 text-xs text-slate-400">
+            Lower numbers appear first in the dashboard list.
+          </p>
         </div>
       </Section>
 

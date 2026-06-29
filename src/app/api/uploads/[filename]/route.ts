@@ -30,13 +30,16 @@ export async function GET(
 
   try {
     const data = await readFile(path.join(uploadDir(), filename));
-    return new NextResponse(data, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    });
+    const headers: Record<string, string> = {
+      "Content-Type": contentType,
+      "Cache-Control": "public, max-age=31536000, immutable",
+    };
+    // Harden SVG delivery: sandbox so any embedded script can't execute.
+    if (ext === "svg") {
+      headers["Content-Security-Policy"] = "default-src 'none'; style-src 'unsafe-inline'; sandbox";
+      headers["X-Content-Type-Options"] = "nosniff";
+    }
+    return new NextResponse(new Uint8Array(data), { status: 200, headers });
   } catch {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }

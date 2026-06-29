@@ -3,11 +3,7 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 import { isAuthenticated } from "@/lib/session";
-import {
-  uploadDir,
-  MAX_UPLOAD_BYTES,
-  ALLOWED_TYPES,
-} from "@/lib/uploads";
+import { uploadDir, ALLOWED_TYPES, maxBytesForExt } from "@/lib/uploads";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -30,14 +26,20 @@ export async function POST(req: NextRequest) {
     const ext = ALLOWED_TYPES[blob.type];
     if (!ext) {
       return NextResponse.json(
-        { error: "Unsupported file type. Use JPG, PNG, or WEBP." },
+        { error: "Unsupported file type. Use JPG, PNG, WEBP, or SVG." },
         { status: 415 }
       );
     }
 
-    if (blob.size > MAX_UPLOAD_BYTES) {
+    const maxBytes = maxBytesForExt(ext);
+    if (blob.size > maxBytes) {
       return NextResponse.json(
-        { error: "File too large. Maximum size is 3 MB." },
+        {
+          error:
+            ext === "svg"
+              ? "SVG too large. Maximum size is 1 MB."
+              : "File too large. Maximum size is 3 MB.",
+        },
         { status: 413 }
       );
     }

@@ -7,10 +7,13 @@ export const DEFAULT_SETTINGS = {
   id: SETTINGS_ID,
   logoUrl: null as string | null,
   dashboardTitle: "Mike Sport Cards",
-  accentColor: "#f97316",
+  accentColor: "#F58220",
   companyWebsite: null as string | null,
   defaultAddress: null as string | null,
   defaultCompanyPhone: null as string | null,
+  cardEmblemUrl: null as string | null,
+  showEmblemOnCards: true,
+  emblemPosition: "top",
 };
 
 /** Read settings without writing (safe for public pages). Falls back to defaults. */

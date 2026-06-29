@@ -2,13 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, User, Loader2 } from "lucide-react";
-import Wordmark from "@/components/Wordmark";
+import { Lock, User, Loader2, Eye, EyeOff } from "lucide-react";
+import Brand from "@/components/Brand";
 
-export default function LoginForm() {
+export default function LoginForm({
+  logoUrl,
+  dashboardTitle,
+}: {
+  logoUrl?: string | null;
+  dashboardTitle?: string | null;
+}) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -54,13 +61,24 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-sm animate-fade-in-up">
       <div className="mb-8 flex flex-col items-center text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 text-xl font-extrabold text-ink-950 shadow-lg shadow-brand-500/30">
-          MS
-        </span>
-        <div className="mt-4">
-          <Wordmark onDark className="!text-lg" />
-        </div>
-        <p className="mt-2 text-sm text-slate-400">
+        {logoUrl ? (
+          <Brand
+            logoUrl={logoUrl}
+            title={dashboardTitle}
+            onDark
+            imgClassName="h-12 w-auto max-w-[200px] object-contain"
+          />
+        ) : (
+          <>
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 text-xl font-extrabold text-ink-950 shadow-lg shadow-brand-500/30">
+              MS
+            </span>
+            <div className="mt-4">
+              <Brand onDark className="!text-lg" />
+            </div>
+          </>
+        )}
+        <p className="mt-3 text-sm text-slate-400">
           Mike Sport Digital Cards Admin
         </p>
       </div>
@@ -96,7 +114,7 @@ export default function LoginForm() {
           <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-white/15 bg-ink-950/40 px-3 transition focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/30">
             <Lock className="h-4 w-4 text-slate-400" />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -104,6 +122,18 @@ export default function LoginForm() {
               placeholder="••••••••"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((s) => !s)}
+              className="rounded-md p-1 text-slate-400 transition hover:text-white"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
           </div>
         </label>
 

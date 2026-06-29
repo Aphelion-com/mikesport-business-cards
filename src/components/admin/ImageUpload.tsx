@@ -89,7 +89,7 @@ export default function ImageUpload({
           <input
             ref={inputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept="image/jpeg,image/png,image/webp,image/svg+xml"
             className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];
@@ -108,7 +108,9 @@ export default function ImageUpload({
             className="w-full bg-transparent py-2 text-sm outline-none"
           />
         </div>
-        <p className="text-xs text-slate-400">JPG, PNG or WEBP · up to 3 MB</p>
+        <p className="text-xs text-slate-400">
+          JPG, PNG, WEBP (≤3 MB) or SVG (≤1 MB)
+        </p>
       </div>
     </div>
   );

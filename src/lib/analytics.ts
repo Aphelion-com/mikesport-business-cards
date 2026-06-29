@@ -93,7 +93,10 @@ export async function getCardsWithStats(q?: string): Promise<CardWithStats[]> {
     : {};
 
   const [cards, countsByCard] = await Promise.all([
-    prisma.card.findMany({ where, orderBy: { createdAt: "desc" } }),
+    prisma.card.findMany({
+      where,
+      orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
+    }),
     getCountsByCard(),
   ]);
 

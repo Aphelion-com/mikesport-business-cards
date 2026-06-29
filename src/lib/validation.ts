@@ -91,6 +91,13 @@ export const cardSchema = z.object({
   instagramUrl: optionalUrl,
   facebookUrl: optionalUrl,
   tiktokUrl: optionalUrl,
+  displayOrder: z
+    .union([z.number(), z.string(), z.null(), z.undefined()])
+    .transform((v) => {
+      if (v === "" || v === undefined || v === null) return 0;
+      const n = typeof v === "string" ? parseInt(v, 10) : v;
+      return Number.isFinite(n) ? n : 0;
+    }),
   isActive: z.boolean().default(true),
 });
 
@@ -111,10 +118,17 @@ export const settingsSchema = z.object({
     .transform((v) => (v === undefined || v === "" ? "Mike Sport Cards" : v)),
   accentColor: z
     .union([hexColor, z.literal(""), z.null(), z.undefined()])
-    .transform((v) => (v === "" || v === undefined || v === null ? "#f97316" : v)),
+    .transform((v) => (v === "" || v === undefined || v === null ? "#F58220" : v)),
   companyWebsite: optionalUrl,
   defaultAddress: optionalString,
   defaultCompanyPhone: optionalString,
+  cardEmblemUrl: optionalImageRef,
+  showEmblemOnCards: z
+    .union([z.boolean(), z.undefined()])
+    .transform((v) => (v === undefined ? true : v)),
+  emblemPosition: z
+    .union([z.enum(["top", "header", "footer"]), z.literal(""), z.undefined()])
+    .transform((v) => (v === "" || v === undefined ? "top" : v)),
 });
 
 export type SettingsInput = z.infer<typeof settingsSchema>;

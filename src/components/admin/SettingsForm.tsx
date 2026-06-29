@@ -15,15 +15,18 @@ export default function SettingsForm({ settings }: { settings: AppSettings }) {
   const [form, setForm] = useState({
     logoUrl: settings.logoUrl ?? "",
     dashboardTitle: settings.dashboardTitle ?? "Mike Sport Cards",
-    accentColor: settings.accentColor ?? "#f97316",
+    accentColor: settings.accentColor ?? "#F58220",
     companyWebsite: settings.companyWebsite ?? "",
     defaultAddress: settings.defaultAddress ?? "",
     defaultCompanyPhone: settings.defaultCompanyPhone ?? "",
+    cardEmblemUrl: settings.cardEmblemUrl ?? "",
+    showEmblemOnCards: settings.showEmblemOnCards ?? true,
+    emblemPosition: settings.emblemPosition ?? "top",
   });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<ToastState>(null);
 
-  function update<K extends keyof typeof form>(key: K, value: string) {
+  function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -107,6 +110,57 @@ export default function SettingsForm({ settings }: { settings: AppSettings }) {
                 placeholder="#f97316"
               />
             </div>
+          </label>
+        </div>
+      </section>
+
+      <section className="rounded-3xl bg-white p-5 shadow-soft ring-1 ring-slate-100 sm:p-6">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+          Public card emblem
+        </h2>
+        <p className="mb-2 mt-1 text-xs text-slate-400">
+          Shown on every public business card page (e.g. the Mike Sport logo).
+        </p>
+        <ImageUpload
+          value={form.cardEmblemUrl}
+          onChange={(url) => update("cardEmblemUrl", url)}
+          label="Emblem"
+          onError={(msg) => setToast({ message: msg, variant: "error" })}
+        />
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-3 py-2.5">
+            <span className="text-sm font-medium text-slate-700">
+              Show emblem on cards
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={form.showEmblemOnCards}
+              onClick={() => update("showEmblemOnCards", !form.showEmblemOnCards)}
+              className={`relative h-7 w-12 shrink-0 rounded-full transition ${
+                form.showEmblemOnCards ? "bg-brand-500" : "bg-slate-300"
+              }`}
+            >
+              <span
+                className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                  form.showEmblemOnCards ? "left-6" : "left-1"
+                }`}
+              />
+            </button>
+          </label>
+          <label className="block">
+            <span className="text-sm font-medium text-slate-700">
+              Emblem position
+            </span>
+            <select
+              value={form.emblemPosition}
+              onChange={(e) => update("emblemPosition", e.target.value)}
+              className={inputClass}
+            >
+              <option value="top">Top (above card)</option>
+              <option value="header">Card header</option>
+              <option value="footer">Footer</option>
+            </select>
           </label>
         </div>
       </section>

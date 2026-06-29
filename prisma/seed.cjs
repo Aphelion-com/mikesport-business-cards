@@ -51,10 +51,12 @@ async function main() {
     create: {
       id: "singleton",
       dashboardTitle: "Mike Sport Cards",
-      accentColor: "#f97316",
+      accentColor: "#F58220",
       companyWebsite: "https://www.mikesport.com",
       defaultAddress: "Head Office - Zalka Highway",
       defaultCompanyPhone: "+9611888855",
+      showEmblemOnCards: true,
+      emblemPosition: "top",
     },
   });
   console.log("  ✓ app settings ready");
