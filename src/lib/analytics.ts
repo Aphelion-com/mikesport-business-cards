@@ -61,12 +61,14 @@ async function getCountsByCard(): Promise<Map<string, CardStatCounts>> {
 
 /** High-level totals for the overview dashboard. */
 export async function getOverview() {
-  const [totalCards, activeCards, totalViews, totalSaves] = await Promise.all([
-    prisma.card.count(),
-    prisma.card.count({ where: { isActive: true } }),
-    prisma.cardEvent.count({ where: { type: "PAGE_VIEW" } }),
-    prisma.cardEvent.count({ where: { type: "SAVE_CONTACT" } }),
-  ]);
+  const [totalCards, activeCards, totalViews, totalSaves, totalQrDownloads] =
+    await Promise.all([
+      prisma.card.count(),
+      prisma.card.count({ where: { isActive: true } }),
+      prisma.cardEvent.count({ where: { type: "PAGE_VIEW" } }),
+      prisma.cardEvent.count({ where: { type: "SAVE_CONTACT" } }),
+      prisma.cardEvent.count({ where: { type: "QR_DOWNLOAD" } }),
+    ]);
 
   return {
     totalCards,
@@ -74,6 +76,7 @@ export async function getOverview() {
     inactiveCards: totalCards - activeCards,
     totalViews,
     totalSaves,
+    totalQrDownloads,
   };
 }
 
@@ -107,6 +110,63 @@ export async function getMostViewed(limit = 5): Promise<CardWithStats[]> {
     .sort((a, b) => b.stats.views - a.stats.views)
     .slice(0, limit)
     .filter((c) => c.stats.views > 0 || all.length <= limit);
+}
+
+/** Top cards by Save Contact clicks. */
+export async function getMostSaved(limit = 5): Promise<CardWithStats[]> {
+  const all = await getCardsWithStats();
+  return [...all]
+    .sort((a, b) => b.stats.saves - a.stats.saves)
+    .slice(0, limit)
+    .filter((c) => c.stats.saves > 0 || all.length <= limit);
+}
+
+/** Most recently updated cards. */
+export async function getRecentlyUpdated(limit = 5): Promise<Card[]> {
+  return prisma.card.findMany({ orderBy: { updatedAt: "desc" }, take: limit });
+}
+
+export type DayPoint = { label: string; date: string; views: number; saves: number };
+
+/**
+ * Page views & saves grouped by day for the last `days` days (oldest -> newest).
+ * Done in JS to keep it DB-agnostic and simple.
+ */
+export async function getDailyActivity(days = 7): Promise<DayPoint[]> {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - (days - 1));
+
+  const events = await prisma.cardEvent.findMany({
+    where: {
+      createdAt: { gte: start },
+      type: { in: ["PAGE_VIEW", "SAVE_CONTACT"] },
+    },
+    select: { type: true, createdAt: true },
+  });
+
+  const buckets: DayPoint[] = [];
+  for (let i = 0; i < days; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    buckets.push({
+      label: d.toLocaleDateString("en-GB", { weekday: "short" }),
+      date: d.toISOString().slice(0, 10),
+      views: 0,
+      saves: 0,
+    });
+  }
+
+  const indexByDate = new Map(buckets.map((b, i) => [b.date, i]));
+  for (const e of events) {
+    const key = new Date(e.createdAt).toISOString().slice(0, 10);
+    const idx = indexByDate.get(key);
+    if (idx === undefined) continue;
+    if (e.type === "PAGE_VIEW") buckets[idx].views += 1;
+    else if (e.type === "SAVE_CONTACT") buckets[idx].saves += 1;
+  }
+
+  return buckets;
 }
 
 export type RecentEvent = CardEvent & { card: Pick<Card, "fullName" | "slug"> };

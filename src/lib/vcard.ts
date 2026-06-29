@@ -28,12 +28,18 @@ function splitName(fullName: string): { family: string; given: string } {
 export function buildVCard(card: Card): string {
   const { family, given } = splitName(card.fullName);
 
+  const org = card.companyName || ORGANIZATION;
+  // ORG can carry a department as its second component: ORG:Company;Department
+  const orgLine = card.department
+    ? `ORG:${esc(org)};${esc(card.department)}`
+    : `ORG:${esc(org)}`;
+
   const lines: string[] = [
     "BEGIN:VCARD",
     "VERSION:3.0",
     `N:${esc(family)};${esc(given)};;;`,
     `FN:${esc(card.fullName)}`,
-    `ORG:${esc(ORGANIZATION)}`,
+    orgLine,
     `TITLE:${esc(card.position)}`,
   ];
 
@@ -58,6 +64,9 @@ export function buildVCard(card: Card): string {
   }
   if (card.profileImageUrl) {
     lines.push(`PHOTO;VALUE=URI:${esc(card.profileImageUrl)}`);
+  }
+  if (card.description) {
+    lines.push(`NOTE:${esc(card.description)}`);
   }
 
   // Social profiles as URLs

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, User, Loader2, IdCard } from "lucide-react";
+import { Lock, User, Loader2 } from "lucide-react";
+import Wordmark from "@/components/Wordmark";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -36,7 +37,6 @@ export default function LoginForm() {
         return;
       }
 
-      // Success: go to the dashboard and refresh server components.
       router.replace("/admin");
       router.refresh();
     } catch (err) {
@@ -52,39 +52,39 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full max-w-sm animate-fade-in-up">
       <div className="mb-8 flex flex-col items-center text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 text-white shadow-lg">
-          <IdCard className="h-7 w-7" />
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-500 text-xl font-extrabold text-ink-950 shadow-lg shadow-brand-500/30">
+          MS
+        </span>
+        <div className="mt-4">
+          <Wordmark onDark className="!text-lg" />
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-slate-900">
-          Admin Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Mike Sport Digital Business Cards
+        <p className="mt-2 text-sm text-slate-400">
+          Mike Sport Digital Cards Admin
         </p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="rounded-3xl bg-white p-6 shadow-card"
+        className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur"
       >
         {error && (
-          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          <div className="mb-4 animate-fade-in rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300">
             {error}
           </div>
         )}
 
         <label className="block">
-          <span className="text-sm font-medium text-slate-700">Username</span>
-          <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-slate-200 px-3 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
+          <span className="text-sm font-medium text-slate-200">Username</span>
+          <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-white/15 bg-ink-950/40 px-3 transition focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/30">
             <User className="h-4 w-4 text-slate-400" />
             <input
               type="text"
               autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-transparent py-2.5 text-sm outline-none"
+              className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-slate-500"
               placeholder="admin"
               required
             />
@@ -92,15 +92,15 @@ export default function LoginForm() {
         </label>
 
         <label className="mt-4 block">
-          <span className="text-sm font-medium text-slate-700">Password</span>
-          <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-slate-200 px-3 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
+          <span className="text-sm font-medium text-slate-200">Password</span>
+          <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-white/15 bg-ink-950/40 px-3 transition focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/30">
             <Lock className="h-4 w-4 text-slate-400" />
             <input
               type="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-transparent py-2.5 text-sm outline-none"
+              className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-slate-500"
               placeholder="••••••••"
               required
             />
@@ -110,7 +110,7 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-3 font-semibold text-ink-950 transition hover:bg-brand-400 disabled:opacity-60"
         >
           {loading ? (
             <>
@@ -122,6 +122,10 @@ export default function LoginForm() {
           )}
         </button>
       </form>
+
+      <p className="mt-6 text-center text-xs text-slate-500">
+        © {new Date().getFullYear()} Mike Sport
+      </p>
     </div>
   );
 }

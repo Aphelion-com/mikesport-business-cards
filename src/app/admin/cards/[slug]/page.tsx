@@ -13,8 +13,9 @@ import {
   Phone,
   Activity,
 } from "lucide-react";
-import AdminShell from "@/components/admin/AdminShell";
+import AdminLayout from "@/components/admin/AdminLayout";
 import CardDetailActions from "@/components/admin/CardDetailActions";
+import StatusToggle from "@/components/admin/StatusToggle";
 import { StatusBadge } from "@/components/admin/CardsManager";
 import { prisma } from "@/lib/prisma";
 import { getCardStats } from "@/lib/analytics";
@@ -58,7 +59,7 @@ export default async function CardDetailsPage({
   const publicUrl = publicCardUrl(card.slug);
 
   return (
-    <AdminShell active="/admin/cards">
+    <AdminLayout active="/admin/cards">
       <Link
         href="/admin/cards"
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-ink-800"
@@ -74,7 +75,7 @@ export default async function CardDetailsPage({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={card.profileImageUrl}
-              alt=""
+              alt={card.profileImageAlt || card.fullName}
               className="h-16 w-16 rounded-2xl object-cover"
             />
           ) : (
@@ -87,23 +88,30 @@ export default async function CardDetailsPage({
             </div>
           )}
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight text-ink-950">
                 {card.fullName}
               </h1>
               <StatusBadge active={card.isActive} />
             </div>
-            <p className="text-sm text-slate-500">{card.position}</p>
+            <p className="text-sm text-slate-500">
+              {card.position}
+              {card.department ? ` · ${card.department}` : ""}
+              {card.companyName ? ` · ${card.companyName}` : ""}
+            </p>
             <p className="text-xs text-brand-600">/{card.slug}</p>
           </div>
         </div>
-        <Link
-          href={`/admin/cards/${card.slug}/edit`}
-          className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-ink-950 transition hover:bg-brand-400"
-        >
-          <Pencil className="h-4 w-4" />
-          Edit
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusToggle slug={card.slug} initialActive={card.isActive} />
+          <Link
+            href={`/admin/cards/${card.slug}/edit`}
+            className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-ink-950 transition hover:bg-brand-400"
+          >
+            <Pencil className="h-4 w-4" />
+            Edit
+          </Link>
+        </div>
       </div>
 
       {/* Stat tiles */}
@@ -143,6 +151,15 @@ export default async function CardDetailsPage({
 
         {/* Contact + recent events */}
         <div className="space-y-6 lg:col-span-3">
+          {card.description && (
+            <section className="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-100">
+              <h2 className="font-semibold text-ink-950">Description</h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                {card.description}
+              </p>
+            </section>
+          )}
+
           <section className="rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-100">
             <h2 className="font-semibold text-ink-950">Contact details</h2>
             <dl className="mt-4 space-y-3 text-sm">
@@ -193,7 +210,7 @@ export default async function CardDetailsPage({
           </section>
         </div>
       </div>
-    </AdminShell>
+    </AdminLayout>
   );
 }
 

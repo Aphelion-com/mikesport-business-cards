@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import AdminShell from "@/components/admin/AdminShell";
+import AdminLayout from "@/components/admin/AdminLayout";
 import CardForm from "@/components/CardForm";
 import { prisma } from "@/lib/prisma";
 import { getBaseUrl } from "@/lib/baseUrl";
@@ -20,7 +20,7 @@ export default async function EditCardPage({
   }
 
   return (
-    <AdminShell active="/admin/cards">
+    <AdminLayout active="/admin/cards">
       <Link
         href={`/admin/cards/${card.slug}`}
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-ink-800"
@@ -35,6 +35,6 @@ export default async function EditCardPage({
       <div className="mt-6 max-w-3xl">
         <CardForm mode="edit" card={card} baseUrl={getBaseUrl()} />
       </div>
-    </AdminShell>
+    </AdminLayout>
   );
 }

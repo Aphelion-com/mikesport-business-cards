@@ -27,5 +27,8 @@ yarn-error.log*
 # prisma
 /prisma/*.db
 
+# local uploads (persisted via Docker volume in production)
+/uploads
+
 # typescript
 *.tsbuildinfo

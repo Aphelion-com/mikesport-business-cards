@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Eye, Download, QrCode, Copy, ExternalLink, Activity } from "lucide-react";
-import AdminShell from "@/components/admin/AdminShell";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { WeeklyBars, TopBars } from "@/components/admin/Charts";
 import {
   getOverview,
   getCardsWithStats,
   getRecentActivity,
+  getDailyActivity,
 } from "@/lib/analytics";
 import { EVENT_LABEL, timeAgo } from "@/lib/format";
 
@@ -34,38 +36,47 @@ function Tile({
 }
 
 export default async function AnalyticsPage() {
-  const [overview, cards, recent] = await Promise.all([
+  const [overview, cards, recent, daily] = await Promise.all([
     getOverview(),
     getCardsWithStats(),
     getRecentActivity(15),
+    getDailyActivity(7),
   ]);
 
   const byViews = [...cards].sort((a, b) => b.stats.views - a.stats.views);
+  const bySaves = [...cards].sort((a, b) => b.stats.saves - a.stats.saves);
 
   return (
-    <AdminShell active="/admin/analytics" title="Analytics">
-      {/* Totals */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <AdminLayout active="/admin/analytics" title="Analytics">
+      {/* Totals: 1 / 2 / 4 columns */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Tile icon={<Eye className="h-4 w-4 text-brand-600" />} label="Total views" value={overview.totalViews} />
-        <Tile
-          icon={<Download className="h-4 w-4 text-brand-600" />}
-          label="Contacts saved"
-          value={overview.totalSaves}
-        />
-        <Tile
-          icon={<Eye className="h-4 w-4 text-slate-500" />}
-          label="Active cards"
-          value={overview.activeCards}
-        />
-        <Tile
-          icon={<Eye className="h-4 w-4 text-slate-500" />}
-          label="Total cards"
-          value={overview.totalCards}
-        />
+        <Tile icon={<Download className="h-4 w-4 text-brand-600" />} label="Contacts saved" value={overview.totalSaves} />
+        <Tile icon={<QrCode className="h-4 w-4 text-brand-600" />} label="QR downloads" value={overview.totalQrDownloads} />
+        <Tile icon={<Eye className="h-4 w-4 text-slate-500" />} label="Total cards" value={overview.totalCards} />
+      </div>
+
+      {/* Charts */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-5">
+        <section className="lg:col-span-3 rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-100">
+          <h2 className="font-semibold text-ink-950">Activity — last 7 days</h2>
+          <div className="mt-4">
+            <WeeklyBars data={daily} />
+          </div>
+        </section>
+        <section className="lg:col-span-2 rounded-2xl bg-white p-5 shadow-soft ring-1 ring-slate-100">
+          <h2 className="font-semibold text-ink-950">Top by Save Contact</h2>
+          <div className="mt-4">
+            <TopBars
+              items={bySaves.slice(0, 5).map((c) => ({ label: c.fullName, value: c.stats.saves }))}
+              emptyText="No saves recorded yet."
+            />
+          </div>
+        </section>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
-        {/* Per-card table */}
+        {/* Per-card table (desktop) / cards (mobile) */}
         <section className="lg:col-span-3 overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-100">
           <div className="border-b border-slate-100 px-5 py-4">
             <h2 className="font-semibold text-ink-950">Views & saves per card</h2>
@@ -75,64 +86,59 @@ export default async function AnalyticsPage() {
               No cards yet.
             </p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[560px] text-left text-sm">
-                <thead>
-                  <tr className="bg-slate-50/70 text-xs uppercase tracking-wide text-slate-400">
-                    <th className="px-5 py-3 font-semibold">Employee</th>
-                    <th className="px-3 py-3 text-right font-semibold">
-                      <Eye className="ml-auto h-4 w-4" />
-                    </th>
-                    <th className="px-3 py-3 text-right font-semibold">
-                      <Download className="ml-auto h-4 w-4" />
-                    </th>
-                    <th className="px-3 py-3 text-right font-semibold">
-                      <QrCode className="ml-auto h-4 w-4" />
-                    </th>
-                    <th className="px-3 py-3 text-right font-semibold">
-                      <Copy className="ml-auto h-4 w-4" />
-                    </th>
-                    <th className="px-3 py-3 pr-5 text-right font-semibold">
-                      <ExternalLink className="ml-auto h-4 w-4" />
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {byViews.map((c) => (
-                    <tr key={c.id} className="hover:bg-slate-50/60">
-                      <td className="px-5 py-3">
-                        <Link
-                          href={`/admin/cards/${c.slug}`}
-                          className="font-medium text-ink-900 hover:text-brand-700"
-                        >
-                          {c.fullName}
-                        </Link>
-                        <p className="text-xs text-slate-400">{c.position}</p>
-                      </td>
-                      <td className="px-3 py-3 text-right tabular-nums text-ink-800">
-                        {c.stats.views}
-                      </td>
-                      <td className="px-3 py-3 text-right tabular-nums text-ink-800">
-                        {c.stats.saves}
-                      </td>
-                      <td className="px-3 py-3 text-right tabular-nums text-slate-500">
-                        {c.stats.qrDownloads}
-                      </td>
-                      <td className="px-3 py-3 text-right tabular-nums text-slate-500">
-                        {c.stats.copies}
-                      </td>
-                      <td className="px-3 py-3 pr-5 text-right tabular-nums text-slate-500">
-                        {c.stats.previews}
-                      </td>
+            <>
+              {/* desktop table */}
+              <div className="hidden sm:block">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="bg-slate-50/70 text-xs uppercase tracking-wide text-slate-400">
+                      <th className="px-5 py-3 font-semibold">Employee</th>
+                      <th className="px-3 py-3 text-right font-semibold">Views</th>
+                      <th className="px-3 py-3 text-right font-semibold">Saves</th>
+                      <th className="px-3 py-3 text-right font-semibold">QR</th>
+                      <th className="px-3 py-3 text-right font-semibold">Copies</th>
+                      <th className="px-3 py-3 pr-5 text-right font-semibold">Previews</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {byViews.map((c) => (
+                      <tr key={c.id} className="hover:bg-slate-50/60">
+                        <td className="px-5 py-3">
+                          <Link href={`/admin/cards/${c.slug}`} className="font-medium text-ink-900 hover:text-brand-700">
+                            {c.fullName}
+                          </Link>
+                          <p className="text-xs text-slate-400">{c.position}</p>
+                        </td>
+                        <td className="px-3 py-3 text-right tabular-nums text-ink-800">{c.stats.views}</td>
+                        <td className="px-3 py-3 text-right tabular-nums text-ink-800">{c.stats.saves}</td>
+                        <td className="px-3 py-3 text-right tabular-nums text-slate-500">{c.stats.qrDownloads}</td>
+                        <td className="px-3 py-3 text-right tabular-nums text-slate-500">{c.stats.copies}</td>
+                        <td className="px-3 py-3 pr-5 text-right tabular-nums text-slate-500">{c.stats.previews}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {/* mobile cards */}
+              <ul className="divide-y divide-slate-100 sm:hidden">
+                {byViews.map((c) => (
+                  <li key={c.id} className="px-4 py-3">
+                    <Link href={`/admin/cards/${c.slug}`} className="font-medium text-ink-900">
+                      {c.fullName}
+                    </Link>
+                    <p className="text-xs text-slate-400">{c.position}</p>
+                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                      <span>{c.stats.views} views</span>
+                      <span>{c.stats.saves} saves</span>
+                      <span>{c.stats.qrDownloads} QR</span>
+                      <span>{c.stats.copies} copies</span>
+                      <span>{c.stats.previews} previews</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
-          <p className="px-5 py-3 text-xs text-slate-400">
-            Columns: views · saves · QR downloads · URL copies · previews
-          </p>
         </section>
 
         {/* Recent activity */}
@@ -154,9 +160,7 @@ export default async function AnalyticsPage() {
                       <span className="text-slate-400">·</span>{" "}
                       <span className="text-slate-600">{e.card.fullName}</span>
                     </p>
-                    <p className="text-xs text-slate-400">
-                      {timeAgo(e.createdAt)}
-                    </p>
+                    <p className="text-xs text-slate-400">{timeAgo(e.createdAt)}</p>
                   </div>
                 </li>
               ))}
@@ -164,6 +168,10 @@ export default async function AnalyticsPage() {
           )}
         </section>
       </div>
-    </AdminShell>
+
+      <p className="mt-3 text-xs text-slate-400">
+        Columns: views · saves · QR downloads · URL copies · previews
+      </p>
+    </AdminLayout>
   );
 }

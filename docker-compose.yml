@@ -16,6 +16,9 @@ services:
       retries: 10
 
   app:
+    # Hostinger pulls this prebuilt image from GHCR. For local use, `build`
+    # produces the same image tag.
+    image: ghcr.io/aphelion-com/mikesport-business-cards:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -32,11 +35,18 @@ services:
       AUTH_SECRET: ${AUTH_SECRET}
       # "false" for HTTP testing (IP:3015); set "true" once HTTPS is ready.
       AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      # Persistent uploads directory (mounted volume below).
+      UPLOAD_DIR: /app/uploads
       NODE_ENV: production
+    volumes:
+      # Persist uploaded logos & profile images across container restarts.
+      - uploads:/app/uploads
     ports:
       # host:container -> app exposed on host port 3015
       - "3015:3000"
 
 volumes:
   pgdata:
+    driver: local
+  uploads:
     driver: local

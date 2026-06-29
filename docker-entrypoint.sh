@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Ensure the persistent uploads directory exists.
+mkdir -p "${UPLOAD_DIR:-/app/uploads}" 2>/dev/null || true
+
 echo "▶ Waiting for the database and applying schema..."
 
 # Apply the Prisma schema to the database (creates/updates tables).

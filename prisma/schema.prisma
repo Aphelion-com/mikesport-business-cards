@@ -12,6 +12,10 @@ model Card {
   fullName        String
   slug            String   @unique
   position        String
+  department      String?
+  companyName     String   @default("Mike Sport")
+  officeLocation  String?
+  description     String?
   mobilePhone     String
   companyPhone    String?
   extension       String?
@@ -19,6 +23,7 @@ model Card {
   website         String?
   address         String?
   profileImageUrl String?
+  profileImageAlt String?
   linkedinUrl     String?
   instagramUrl    String?
   facebookUrl     String?
@@ -55,4 +60,17 @@ model CardEvent {
   @@index([type])
   @@index([createdAt])
   @@map("card_events")
+}
+
+model AppSettings {
+  id                  String   @id @default("singleton")
+  logoUrl             String?
+  dashboardTitle      String   @default("Mike Sport Cards")
+  accentColor         String   @default("#f97316")
+  companyWebsite      String?
+  defaultAddress      String?
+  defaultCompanyPhone String?
+  updatedAt           DateTime @updatedAt @default(now())
+
+  @@map("app_settings")
 }

@@ -10,3 +10,4 @@ docker-compose.yml
 .env*.local
 npm-debug.log
 *.tsbuildinfo
+uploads

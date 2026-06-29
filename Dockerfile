@@ -43,6 +43,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
+# Persistent uploads directory (mounted as a volume in docker-compose).
+ENV UPLOAD_DIR=/app/uploads
+RUN mkdir -p /app/uploads && chown -R nextjs:nodejs /app/uploads
+
 EXPOSE 3000
 USER nextjs
 

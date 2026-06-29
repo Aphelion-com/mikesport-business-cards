@@ -4,8 +4,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Card } from "@prisma/client";
-import { Loader2, ArrowLeft, Save, Link2 } from "lucide-react";
+import {
+  Loader2,
+  ArrowLeft,
+  Save,
+  Link2,
+  User,
+  Phone,
+  ImageIcon,
+  Share2,
+  FileText,
+  ToggleRight,
+} from "lucide-react";
 import { slugify } from "@/lib/slug";
+import ImageUpload from "@/components/admin/ImageUpload";
+import Toast, { type ToastState } from "@/components/admin/Toast";
 
 type Mode = "create" | "edit";
 
@@ -13,6 +26,10 @@ type FormState = {
   fullName: string;
   slug: string;
   position: string;
+  department: string;
+  companyName: string;
+  officeLocation: string;
+  description: string;
   mobilePhone: string;
   companyPhone: string;
   extension: string;
@@ -20,6 +37,7 @@ type FormState = {
   website: string;
   address: string;
   profileImageUrl: string;
+  profileImageAlt: string;
   linkedinUrl: string;
   instagramUrl: string;
   facebookUrl: string;
@@ -32,6 +50,10 @@ function fromCard(card?: Card): FormState {
     fullName: card?.fullName ?? "",
     slug: card?.slug ?? "",
     position: card?.position ?? "",
+    department: card?.department ?? "",
+    companyName: card?.companyName ?? "Mike Sport",
+    officeLocation: card?.officeLocation ?? "",
+    description: card?.description ?? "",
     mobilePhone: card?.mobilePhone ?? "",
     companyPhone: card?.companyPhone ?? "",
     extension: card?.extension ?? "",
@@ -39,6 +61,7 @@ function fromCard(card?: Card): FormState {
     website: card?.website ?? "",
     address: card?.address ?? "",
     profileImageUrl: card?.profileImageUrl ?? "",
+    profileImageAlt: card?.profileImageAlt ?? "",
     linkedinUrl: card?.linkedinUrl ?? "",
     instagramUrl: card?.instagramUrl ?? "",
     facebookUrl: card?.facebookUrl ?? "",
@@ -47,16 +70,46 @@ function fromCard(card?: Card): FormState {
   };
 }
 
+const inputClass =
+  "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
+
+function Section({
+  icon,
+  title,
+  subtitle,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  subtitle?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-3xl bg-white p-5 shadow-soft ring-1 ring-slate-100 sm:p-6">
+      <div className="flex items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+          {icon}
+        </span>
+        <div>
+          <h2 className="text-sm font-bold text-ink-900">{title}</h2>
+          {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+        </div>
+      </div>
+      <div className="mt-4">{children}</div>
+    </section>
+  );
+}
+
 function Field({
   label,
-  children,
-  hint,
   required,
+  error,
+  children,
 }: {
   label: string;
-  children: React.ReactNode;
-  hint?: string;
   required?: boolean;
+  error?: string;
+  children: React.ReactNode;
 }) {
   return (
     <label className="block">
@@ -65,13 +118,10 @@ function Field({
         {required && <span className="ml-0.5 text-red-500">*</span>}
       </span>
       {children}
-      {hint && <span className="mt-1 block text-xs text-slate-400">{hint}</span>}
+      {error && <span className="mt-1 block text-xs text-red-500">{error}</span>}
     </label>
   );
 }
-
-const inputClass =
-  "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
 
 export default function CardForm({
   mode,
@@ -85,9 +135,9 @@ export default function CardForm({
   const router = useRouter();
   const [form, setForm] = useState<FormState>(fromCard(card));
   const [slugTouched, setSlugTouched] = useState(mode === "edit");
-  const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<ToastState>(null);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -103,14 +153,8 @@ export default function CardForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
     setFieldErrors({});
     setLoading(true);
-
-    const payload = {
-      ...form,
-      // normalize empty optional strings to undefined handled server-side
-    };
 
     const endpoint =
       mode === "create" ? "/api/cards" : `/api/cards/${card!.slug}`;
@@ -120,48 +164,47 @@ export default function CardForm({
       const res = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(form),
       });
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        if (data.issues?.fieldErrors) {
-          setFieldErrors(data.issues.fieldErrors);
-        }
-        setError(data.error || "Failed to save card.");
+        if (data.issues?.fieldErrors) setFieldErrors(data.issues.fieldErrors);
+        setToast({
+          message:
+            res.status === 409
+              ? "That slug is already in use — choose a different one."
+              : data.error || "Failed to save card.",
+          variant: "error",
+        });
         setLoading(false);
         return;
       }
 
-      router.push("/admin/cards");
-      router.refresh();
+      setToast({
+        message: mode === "create" ? "Card created." : "Changes saved.",
+        variant: "success",
+      });
+      // Brief pause so the toast is visible before navigating.
+      setTimeout(() => {
+        router.push("/admin/cards");
+        router.refresh();
+      }, 600);
     } catch {
-      setError("Network error. Please try again.");
+      setToast({ message: "Network error. Please try again.", variant: "error" });
       setLoading(false);
     }
   }
 
   const publicUrl = `${baseUrl.replace(/\/$/, "")}/${form.slug || ""}`;
-
-  function err(name: string) {
-    return fieldErrors[name]?.[0];
-  }
+  const err = (name: string) => fieldErrors[name]?.[0];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {error}
-        </div>
-      )}
-
-      {/* Identity */}
-      <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Identity
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field label="Full name" required>
+      {/* Basic info */}
+      <Section icon={<User className="h-5 w-5" />} title="Basic info">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Full name" required error={err("fullName")}>
             <input
               className={inputClass}
               value={form.fullName}
@@ -169,14 +212,8 @@ export default function CardForm({
               placeholder="Rawad Halloun"
               required
             />
-            {err("fullName") && (
-              <span className="mt-1 block text-xs text-red-500">
-                {err("fullName")}
-              </span>
-            )}
           </Field>
-
-          <Field label="Position" required>
+          <Field label="Position" required error={err("position")}>
             <input
               className={inputClass}
               value={form.position}
@@ -184,20 +221,27 @@ export default function CardForm({
               placeholder="Retail Director"
               required
             />
-            {err("position") && (
-              <span className="mt-1 block text-xs text-red-500">
-                {err("position")}
-              </span>
-            )}
+          </Field>
+          <Field label="Department" error={err("department")}>
+            <input
+              className={inputClass}
+              value={form.department}
+              onChange={(e) => update("department", e.target.value)}
+              placeholder="Retail"
+            />
+          </Field>
+          <Field label="Company name" error={err("companyName")}>
+            <input
+              className={inputClass}
+              value={form.companyName}
+              onChange={(e) => update("companyName", e.target.value)}
+              placeholder="Mike Sport"
+            />
           </Field>
         </div>
 
         <div className="mt-4">
-          <Field
-            label="Slug (public URL)"
-            required
-            hint="Auto-generated from the full name. Edit to customise."
-          >
+          <Field label="Slug (public URL)" required error={err("slug")}>
             <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-slate-200 px-3 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-100">
               <Link2 className="h-4 w-4 shrink-0 text-slate-400" />
               <input
@@ -211,39 +255,18 @@ export default function CardForm({
                 required
               />
             </div>
-            {err("slug") && (
-              <span className="mt-1 block text-xs text-red-500">
-                {err("slug")}
-              </span>
-            )}
           </Field>
-          <p className="mt-2 break-all text-xs text-brand-600">{publicUrl}</p>
+          <p className="mt-2 break-all text-xs">
+            <span className="text-slate-400">Public URL: </span>
+            <span className="font-medium text-brand-600">{publicUrl}</span>
+          </p>
         </div>
+      </Section>
 
-        <div className="mt-4">
-          <Field label="Profile image URL" hint="Leave empty to use initials avatar.">
-            <input
-              className={inputClass}
-              value={form.profileImageUrl}
-              onChange={(e) => update("profileImageUrl", e.target.value)}
-              placeholder="https://…/photo.jpg"
-            />
-            {err("profileImageUrl") && (
-              <span className="mt-1 block text-xs text-red-500">
-                {err("profileImageUrl")}
-              </span>
-            )}
-          </Field>
-        </div>
-      </section>
-
-      {/* Contact */}
-      <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Contact
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field label="Mobile phone" required>
+      {/* Contact info */}
+      <Section icon={<Phone className="h-5 w-5" />} title="Contact info">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Mobile phone" required error={err("mobilePhone")}>
             <input
               className={inputClass}
               value={form.mobilePhone}
@@ -251,14 +274,8 @@ export default function CardForm({
               placeholder="+96179409364"
               required
             />
-            {err("mobilePhone") && (
-              <span className="mt-1 block text-xs text-red-500">
-                {err("mobilePhone")}
-              </span>
-            )}
           </Field>
-
-          <Field label="Company phone">
+          <Field label="Company phone" error={err("companyPhone")}>
             <input
               className={inputClass}
               value={form.companyPhone}
@@ -266,8 +283,7 @@ export default function CardForm({
               placeholder="+9611888855"
             />
           </Field>
-
-          <Field label="Extension">
+          <Field label="Extension" error={err("extension")}>
             <input
               className={inputClass}
               value={form.extension}
@@ -275,8 +291,7 @@ export default function CardForm({
               placeholder="1560"
             />
           </Field>
-
-          <Field label="Email" required>
+          <Field label="Email" required error={err("email")}>
             <input
               type="email"
               className={inputClass}
@@ -285,28 +300,16 @@ export default function CardForm({
               placeholder="name@mikesport.com"
               required
             />
-            {err("email") && (
-              <span className="mt-1 block text-xs text-red-500">
-                {err("email")}
-              </span>
-            )}
           </Field>
-
-          <Field label="Website">
+          <Field label="Website" error={err("website")}>
             <input
               className={inputClass}
               value={form.website}
               onChange={(e) => update("website", e.target.value)}
               placeholder="https://www.mikesport.com"
             />
-            {err("website") && (
-              <span className="mt-1 block text-xs text-red-500">
-                {err("website")}
-              </span>
-            )}
           </Field>
-
-          <Field label="Address">
+          <Field label="Address" error={err("address")}>
             <input
               className={inputClass}
               value={form.address}
@@ -314,16 +317,70 @@ export default function CardForm({
               placeholder="Head Office - Zalka Highway"
             />
           </Field>
+          <Field label="Office location" error={err("officeLocation")}>
+            <input
+              className={inputClass}
+              value={form.officeLocation}
+              onChange={(e) => update("officeLocation", e.target.value)}
+              placeholder="Head Office - Zalka Highway"
+            />
+          </Field>
         </div>
-      </section>
+      </Section>
 
-      {/* Social */}
-      <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-          Social links <span className="font-normal lowercase">(optional)</span>
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field label="LinkedIn URL">
+      {/* Profile image */}
+      <Section
+        icon={<ImageIcon className="h-5 w-5" />}
+        title="Profile image"
+        subtitle="Upload a photo or paste a URL. Empty = initials avatar."
+      >
+        <ImageUpload
+          value={form.profileImageUrl}
+          onChange={(url) => update("profileImageUrl", url)}
+          rounded
+          label="Profile"
+          onError={(msg) => setToast({ message: msg, variant: "error" })}
+        />
+        <div className="mt-4">
+          <Field label="Image alt text" error={err("profileImageAlt")}>
+            <input
+              className={inputClass}
+              value={form.profileImageAlt}
+              onChange={(e) => update("profileImageAlt", e.target.value)}
+              placeholder="Photo of Rawad Halloun"
+            />
+          </Field>
+        </div>
+      </Section>
+
+      {/* Description */}
+      <Section
+        icon={<FileText className="h-5 w-5" />}
+        title="Card description"
+        subtitle="A short professional bio shown on the public card."
+      >
+        <Field label="Description" error={err("description")}>
+          <textarea
+            className={inputClass + " min-h-[96px] resize-y"}
+            value={form.description}
+            onChange={(e) => update("description", e.target.value)}
+            maxLength={600}
+            placeholder="Retail Director at Mike Sport, leading retail operations…"
+          />
+        </Field>
+        <p className="mt-1 text-right text-xs text-slate-400">
+          {form.description.length}/600
+        </p>
+      </Section>
+
+      {/* Social links */}
+      <Section
+        icon={<Share2 className="h-5 w-5" />}
+        title="Social links"
+        subtitle="Optional"
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="LinkedIn URL" error={err("linkedinUrl")}>
             <input
               className={inputClass}
               value={form.linkedinUrl}
@@ -331,7 +388,7 @@ export default function CardForm({
               placeholder="https://linkedin.com/in/…"
             />
           </Field>
-          <Field label="Instagram URL">
+          <Field label="Instagram URL" error={err("instagramUrl")}>
             <input
               className={inputClass}
               value={form.instagramUrl}
@@ -339,7 +396,7 @@ export default function CardForm({
               placeholder="https://instagram.com/…"
             />
           </Field>
-          <Field label="Facebook URL">
+          <Field label="Facebook URL" error={err("facebookUrl")}>
             <input
               className={inputClass}
               value={form.facebookUrl}
@@ -347,7 +404,7 @@ export default function CardForm({
               placeholder="https://facebook.com/…"
             />
           </Field>
-          <Field label="TikTok URL">
+          <Field label="TikTok URL" error={err("tiktokUrl")}>
             <input
               className={inputClass}
               value={form.tiktokUrl}
@@ -356,35 +413,34 @@ export default function CardForm({
             />
           </Field>
         </div>
-      </section>
+      </Section>
 
       {/* Status */}
-      <section className="flex items-center justify-between rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-800">Active</h2>
-          <p className="text-xs text-slate-400">
-            Inactive cards return a 404 on their public page.
+      <Section icon={<ToggleRight className="h-5 w-5" />} title="Status">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-slate-500">
+            Inactive cards show a polished “unavailable” page publicly.
           </p>
-        </div>
-        <button
-          type="button"
-          role="switch"
-          aria-checked={form.isActive}
-          onClick={() => update("isActive", !form.isActive)}
-          className={`relative h-7 w-12 rounded-full transition ${
-            form.isActive ? "bg-brand-600" : "bg-slate-300"
-          }`}
-        >
-          <span
-            className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition ${
-              form.isActive ? "left-6" : "left-1"
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.isActive}
+            onClick={() => update("isActive", !form.isActive)}
+            className={`relative h-7 w-12 shrink-0 rounded-full transition ${
+              form.isActive ? "bg-brand-500" : "bg-slate-300"
             }`}
-          />
-        </button>
-      </section>
+          >
+            <span
+              className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow transition-all ${
+                form.isActive ? "left-6" : "left-1"
+              }`}
+            />
+          </button>
+        </div>
+      </Section>
 
       {/* Actions */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <Link
           href="/admin/cards"
           className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
@@ -395,7 +451,7 @@ export default function CardForm({
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-2.5 text-sm font-semibold text-ink-950 transition hover:bg-brand-400 disabled:opacity-60"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -405,6 +461,8 @@ export default function CardForm({
           {mode === "create" ? "Create Card" : "Save Changes"}
         </button>
       </div>
+
+      <Toast toast={toast} onClose={() => setToast(null)} />
     </form>
   );
 }

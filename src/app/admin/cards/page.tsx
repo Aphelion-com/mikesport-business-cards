@@ -1,4 +1,4 @@
-import AdminShell from "@/components/admin/AdminShell";
+import AdminLayout from "@/components/admin/AdminLayout";
 import CardsManager from "@/components/admin/CardsManager";
 import { getCardsWithStats } from "@/lib/analytics";
 import { getBaseUrl } from "@/lib/baseUrl";
@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
 export default async function CardsPage() {
   const cards = await getCardsWithStats();
   return (
-    <AdminShell active="/admin/cards" title="Business Cards">
+    <AdminLayout active="/admin/cards" title="Business Cards">
       <CardsManager initialCards={cards} baseUrl={getBaseUrl()} />
-    </AdminShell>
+    </AdminLayout>
   );
 }

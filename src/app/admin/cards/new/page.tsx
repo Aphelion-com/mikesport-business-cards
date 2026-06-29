@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import AdminShell from "@/components/admin/AdminShell";
+import AdminLayout from "@/components/admin/AdminLayout";
 import CardForm from "@/components/CardForm";
 import { getBaseUrl } from "@/lib/baseUrl";
 
 export const metadata = { title: "New Card — Mike Sport" };
+export const dynamic = "force-dynamic";
 
 export default function NewCardPage() {
   return (
-    <AdminShell active="/admin/cards">
+    <AdminLayout active="/admin/cards">
       <Link
         href="/admin/cards"
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-ink-800"
@@ -26,6 +27,6 @@ export default function NewCardPage() {
       <div className="mt-6 max-w-3xl">
         <CardForm mode="create" baseUrl={getBaseUrl()} />
       </div>
-    </AdminShell>
+    </AdminLayout>
   );
 }
