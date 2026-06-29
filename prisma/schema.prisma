@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Card {
+  id              String   @id @default(cuid())
+  fullName        String
+  slug            String   @unique
+  position        String
+  mobilePhone     String
+  companyPhone    String?
+  extension       String?
+  email           String
+  website         String?
+  address         String?
+  profileImageUrl String?
+  linkedinUrl     String?
+  instagramUrl    String?
+  facebookUrl     String?
+  tiktokUrl       String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([slug])
+  @@map("cards")
+}
